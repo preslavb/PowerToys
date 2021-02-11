@@ -1,0 +1,14 @@
+{
+  "ID": "04146A39D4E9417C8FFD200B0EE5E871",
+  "ActionKeyword": "//",
+  "IsGlobal": true,
+  "Name": "Windows web search Handler",
+  "Description": "Handles web searches",
+  "Author": "Microsoft",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "http://aka.ms/PowerToys",
+  "ExecuteFileName": "Microsoft.Plugin.WebSearch.dll",
+  "IcoPathDark": "Images\\uri.dark.png",
+  "IcoPathLight": "Images\\uri.light.png"
+}

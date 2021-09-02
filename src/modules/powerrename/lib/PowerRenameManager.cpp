@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-extern HINSTANCE g_hInst;
+//extern HINSTANCE g_hInst;
 
 // The default FOF flags to use in the rename operations
 #define FOF_DEFAULTFLAGS (FOF_ALLOWUNDO | FOFX_ADDUNDORECORD | FOFX_SHOWELEVATIONPROMPT | FOF_RENAMEONCOLLISION)
@@ -458,7 +458,7 @@ HRESULT CPowerRenameManager::_Init()
     m_startRegExWorkerEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
     m_cancelRegExWorkerEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
-    m_hwndMessage = CreateMsgWindow(g_hInst, s_msgWndProc, this);
+    //m_hwndMessage = CreateMsgWindow(g_hInst, s_msgWndProc, this);
 
     return S_OK;
 }

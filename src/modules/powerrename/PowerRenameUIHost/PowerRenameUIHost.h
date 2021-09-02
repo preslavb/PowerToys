@@ -41,6 +41,7 @@ private:
     void OnInitDlg();
     void OnCloseDlg();
     HRESULT EnumerateItems(IUnknown* dataObject);
+    void PopulateExplorerItems();
 
     wil::unique_haccel m_accelerators;
     const HINSTANCE m_instance;

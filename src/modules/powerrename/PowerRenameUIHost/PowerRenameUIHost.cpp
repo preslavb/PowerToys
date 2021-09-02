@@ -9,10 +9,12 @@
 #include <PowerRenameItem.h>
 #include <PowerRenameManager.h>
 
+#include <queue>
+
 #define MAX_LOADSTRING 100
 
 const wchar_t c_WindowClass[] = L"PowerRename";
-extern HINSTANCE g_hInst;
+//extern HINSTANCE g_hInst;
 
 void AppWindow::CreateUIHost(IPowerRenameManager* prManager, IUnknown* dataSource)
 {
@@ -24,7 +26,7 @@ void AppWindow::CreateUIHost(IPowerRenameManager* prManager, IUnknown* dataSourc
 
 int AppWindow::Show(IPowerRenameManager* prManager, IUnknown* dataSource)
 {
-    auto window = AppWindow(g_hInst, prManager, dataSource);
+    auto window = AppWindow(HINSTANCE{}, prManager, dataSource);
     window.CreateAndShowWindow(SW_SHOWNORMAL);
     return window.MessageLoop(window.m_accelerators.get());
 }
@@ -178,26 +180,91 @@ HRESULT AppWindow::EnumerateItems(IUnknown* dataObject)
         {
             UINT itemCount = 0;
             m_prManager->GetItemCount(&itemCount);
-
+            PopulateExplorerItems();
             //_UpdateCounts();
         }
     }
 
     return hr;
 }
-//int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-//                     _In_opt_ HINSTANCE hPrevInstance,
-//                     _In_ LPWSTR    lpCmdLine,
-//                     _In_ int       nCmdShow)
-//{
-//    g_hostHInst = hInstance;
-//    winrt::init_apartment(winrt::apartment_type::single_threaded);
-//
-//    winrt::PowerRenameUI_new::App app;
-//
-//    const auto result = AppWindow::Show(hInstance, nCmdShow);
-//
-//    app.Close();
-//
-//    return result;
-//}
+
+void AppWindow::PopulateExplorerItems()
+{
+    auto explorerItems = m_mainUserControl.ExplorerItems();
+    UINT count = 0;
+    m_prManager->GetVisibleItemCount(&count);
+
+    UINT currDepth = 0;
+    std::queue<UINT> parents{};
+    UINT prevId = 0;
+    parents.push(0);
+
+    for (UINT i = 0; i < count; ++i)
+    {
+        CComPtr<IPowerRenameItem> renameItem;
+        if (SUCCEEDED(m_prManager->GetVisibleItemByIndex(count, &renameItem)))
+        {
+            int id = 0;
+            renameItem->GetId(&id);
+
+            PWSTR originalName = nullptr;
+            renameItem->GetOriginalName(&originalName);
+
+            UINT depth = 0;
+            renameItem->GetDepth(&depth);
+
+            bool isFolder = false;
+            bool isSubFolderContent = false;
+            winrt::check_hresult(renameItem->GetIsFolder(&isFolder));
+
+            if (currDepth == depth)
+            {
+                m_mainUserControl.AddExplorerItem(id, originalName, isFolder ? 0 : 1, parents.back());
+                prevId = id;
+            }
+            else if (depth > currDepth)
+            {
+                parents.push(prevId);
+                m_mainUserControl.AddExplorerItem(id, originalName, isFolder ? 0 : 1, parents.back());
+                currDepth = depth;
+                prevId = id;
+            }
+            else
+            {
+                while (currDepth > depth)
+                {
+                    parents.pop();
+                }
+                m_mainUserControl.AddExplorerItem(id, originalName, isFolder ? 0 : 1, parents.back());
+                prevId = id;
+            }
+        }
+    }
+}
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+                     _In_opt_ HINSTANCE hPrevInstance,
+                     _In_ LPWSTR    lpCmdLine,
+                     _In_ int       nCmdShow)
+{
+    //g_hostHInst = hInstance;
+    winrt::init_apartment(winrt::apartment_type::single_threaded);
+
+    winrt::PowerRenameUI_new::App app;
+    CComPtr<IPowerRenameManager> spsrm;
+    HRESULT hr = CPowerRenameManager::s_CreateInstance(&spsrm);
+    if (SUCCEEDED(hr))
+    {
+        // Create the factory for our items
+        CComPtr<IPowerRenameItemFactory> spsrif;
+        hr = CPowerRenameItem::s_CreateInstance(nullptr, IID_PPV_ARGS(&spsrif));
+        hr = spsrm->PutRenameItemFactory(spsrif);
+
+        if (SUCCEEDED(hr))
+        {
+            CComPtr<IUnknown> dataSource{};
+            const auto result = AppWindow::Show(spsrm, dataSource);
+        }
+    }
+        app.Close();
+}

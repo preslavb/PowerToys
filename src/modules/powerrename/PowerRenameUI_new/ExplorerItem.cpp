@@ -4,12 +4,20 @@
 
 namespace winrt::PowerRenameUI_new::implementation
 {
-    ExplorerItem::ExplorerItem(hstring const& original, int32_t type) :
-        m_original{ original }, m_renamed{ L"renamed_" + original }, m_type{ type }
+    ExplorerItem::ExplorerItem(int32_t id, hstring const& original, int32_t type) :
+        m_id{ id }, m_original{ original }, m_renamed{ L"renamed_" + original }, m_type{ type }
     {
-        m_children = winrt::single_threaded_observable_vector<PowerRenameUI_new::ExplorerItem>();
+        if (m_type == static_cast<UINT>(ExplorerItemType::Folder))
+        {
+            m_children = winrt::single_threaded_observable_vector<PowerRenameUI_new::ExplorerItem>();
+        }
     }
-    
+
+    int32_t ExplorerItem::Id()
+    {
+        return m_id;
+    }
+
     hstring ExplorerItem::Original()
     {
         return m_original;
@@ -51,6 +59,15 @@ namespace winrt::PowerRenameUI_new::implementation
     winrt::Windows::Foundation::Collections::IObservableVector<winrt::PowerRenameUI_new::ExplorerItem> ExplorerItem::Children()
     {
         return m_children;
+    }
+
+    void ExplorerItem::Children(Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::ExplorerItem> const& value)
+    {
+        if (m_children != value)
+        {
+            m_children = value;
+            m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{ L"Children" });
+        }
     }
     
     winrt::event_token ExplorerItem::PropertyChanged(winrt::Windows::UI::Xaml::Data::PropertyChangedEventHandler const& handler)

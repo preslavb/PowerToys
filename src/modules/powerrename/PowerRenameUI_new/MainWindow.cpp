@@ -67,9 +67,8 @@ namespace winrt::PowerRenameUI_new::implementation
         }
         else
         {
-
-           
         }
+    }
 }
 
 void winrt::PowerRenameUI_new::implementation::MainWindow::Click_rename(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)

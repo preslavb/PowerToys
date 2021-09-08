@@ -51,7 +51,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="PowerRename.ico">
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PowerRenameUIHost.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

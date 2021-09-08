@@ -1,8 +1,5 @@
 #include "pch.h"
 #include "PowerRenameExt.h"
-#include <PowerRenameUI.h>
-#include <PowerRenameItem.h>
-#include <PowerRenameManager.h>
 #include <trace.h>
 #include <Helpers.h>
 #include <common/themes/icon_helpers.h>
@@ -11,8 +8,6 @@
 
 #include <common/utils/resources.h>
 #include <common/utils/process_path.h>
-
-#include <PowerRenameUIHost/PowerRenameUIHost.h>
 
 extern HINSTANCE g_hInst;
 
@@ -134,10 +129,84 @@ HRESULT CPowerRenameMenu::InvokeCommand(_In_ LPCMINVOKECOMMANDINFO pici)
             hr = CoMarshalInterThreadInterfaceInStream(__uuidof(m_spdo), m_spdo, &(pInvokeData->pstrm));
             if (SUCCEEDED(hr))
             {
-                hr = SHCreateThread(s_PowerRenameUIThreadProc, pInvokeData, CTF_COINIT | CTF_PROCESS_REF, nullptr) ? S_OK : E_FAIL;
-                if (FAILED(hr))
+                // Set the application path based on the location of the dll
+                std::wstring path = get_module_folderpath(g_hInst);
+                path = path + L"\\PowerRenameUIHost.exe";
+                LPTSTR lpApplicationName = (LPTSTR)path.c_str();
+                // Create an anonymous pipe to stream filenames
+                //SECURITY_ATTRIBUTES sa;
+                //HANDLE hReadPipe;
+                //HANDLE hWritePipe;
+                //sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+                //sa.lpSecurityDescriptor = NULL;
+                //sa.bInheritHandle = TRUE;
+                //HRESULT hr = E_FAIL;
+                //if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0))
+                //{
+                //    hr = HRESULT_FROM_WIN32(GetLastError());
+                //    return hr;
+                //}
+                //if (!SetHandleInformation(hWritePipe, HANDLE_FLAG_INHERIT, 0))
+                //{
+                //    hr = HRESULT_FROM_WIN32(GetLastError());
+                //    return hr;
+                //}
+                //CAtlFile writePipe(hWritePipe);
+
+                CString commandLine;
+                commandLine.Format(_T("\"%s\""), lpApplicationName);
+
+                //// Set the output directory
+                //if (m_pidlFolder)
+                //{
+                //    TCHAR szFolder[MAX_PATH];
+                //    SHGetPathFromIDList(m_pidlFolder, szFolder);
+
+                //    commandLine.AppendFormat(_T(" /d \"%s\""), szFolder);
+                //}
+
+                int nSize = commandLine.GetLength() + 1;
+                LPTSTR lpszCommandLine = new TCHAR[nSize];
+                _tcscpy_s(lpszCommandLine, nSize, commandLine);
+
+                STARTUPINFO startupInfo;
+                ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
+                startupInfo.cb = sizeof(STARTUPINFO);
+                //startupInfo.hStdInput = hReadPipe;
+                startupInfo.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+                if (pici)
                 {
-                    pInvokeData->pstrm->Release(); // if we failed to create the thread, then we must release the stream
+                    startupInfo.wShowWindow = pici->nShow;
+                }
+                else
+                {
+                    startupInfo.wShowWindow = SW_SHOWNORMAL;
+                }
+
+                PROCESS_INFORMATION processInformation;
+
+                // Start the resizer
+                CreateProcess(
+                    NULL,
+                    lpszCommandLine,
+                    NULL,
+                    NULL,
+                    TRUE,
+                    0,
+                    NULL,
+                    NULL,
+                    &startupInfo,
+                    &processInformation);
+                delete[] lpszCommandLine;
+                if (!CloseHandle(processInformation.hProcess))
+                {
+                    hr = HRESULT_FROM_WIN32(GetLastError());
+                    return hr;
+                }
+                if (!CloseHandle(processInformation.hThread))
+                {
+                    hr = HRESULT_FROM_WIN32(GetLastError());
+                    return hr;
                 }
             }
 
@@ -150,50 +219,6 @@ HRESULT CPowerRenameMenu::InvokeCommand(_In_ LPCMINVOKECOMMANDINFO pici)
     }
 
     return hr;
-}
-
-DWORD WINAPI CPowerRenameMenu::s_PowerRenameUIThreadProc(_In_ void* pData)
-{
-    InvokeStruct* pInvokeData = static_cast<InvokeStruct*>(pData);
-    CComPtr<IUnknown> dataSource;
-    HRESULT hr = CoGetInterfaceAndReleaseStream(pInvokeData->pstrm, IID_PPV_ARGS(&dataSource));
-    if (SUCCEEDED(hr))
-    {
-        // Create the rename manager
-        CComPtr<IPowerRenameManager> spsrm;
-        hr = CPowerRenameManager::s_CreateInstance(&spsrm);
-        if (SUCCEEDED(hr))
-        {
-            // Create the factory for our items
-            CComPtr<IPowerRenameItemFactory> spsrif;
-            hr = CPowerRenameItem::s_CreateInstance(nullptr, IID_PPV_ARGS(&spsrif));
-            if (SUCCEEDED(hr))
-            {
-                // Pass the factory to the manager
-                hr = spsrm->PutRenameItemFactory(spsrif);
-                if (SUCCEEDED(hr))
-                {
-
-                    AppWindow::CreateUIHost(spsrm, dataSource);
-                    IDataObject* dummy;
-                    // If we're running on a local COM server, we need to decrement module refcount, which was previously incremented in CPowerRenameMenu::Invoke.
-                    if (SUCCEEDED(dataSource->QueryInterface(IID_IShellItemArray, reinterpret_cast<void**>(&dummy))))
-                    {
-                        ModuleRelease();
-                    }
-                }
-            }
-
-            // Need to call shutdown to break circular dependencies
-            spsrm->Shutdown();
-        }
-    }
-
-    delete pInvokeData;
-
-    Trace::UIShownRet(hr);
-
-    return 0;
 }
 
 HRESULT __stdcall CPowerRenameMenu::GetTitle(IShellItemArray* /*psiItemArray*/, LPWSTR* ppszName)
@@ -255,7 +280,7 @@ HRESULT __stdcall CPowerRenameMenu::Invoke(IShellItemArray* psiItemArray, IBindC
         }
         // Prevent Shutting down before PowerRenameUI is created
         ModuleAddRef();
-        hr = SHCreateThread(s_PowerRenameUIThreadProc, pInvokeData, CTF_COINIT | CTF_PROCESS_REF, nullptr) ? S_OK : E_FAIL;
+        //hr = SHCreateThread(s_PowerRenameUIThreadProc, pInvokeData, CTF_COINIT | CTF_PROCESS_REF, nullptr) ? S_OK : E_FAIL;
     }
     Trace::InvokedRet(hr);
     return S_OK;

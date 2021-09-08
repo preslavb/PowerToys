@@ -3,7 +3,7 @@
 #include <map>
 #include "srwlock.h"
 
-#include "PowerRenameInterfaces.h"
+#include <PowerRenameInterfaces.h>
 
 class CPowerRenameManager :
     public IPowerRenameManager,

@@ -138,6 +138,7 @@ public:
 interface __declspec(uuid("CE8C8616-C1A8-457A-9601-10570F5B9F1F")) IPowerRenameEnum : public IUnknown
 {
 public:
-    IFACEMETHOD(Start)() = 0;
+    IFACEMETHOD(Start)
+    (_In_ IEnumShellItems * enumShellItems) = 0;
     IFACEMETHOD(Cancel)() = 0;
 };

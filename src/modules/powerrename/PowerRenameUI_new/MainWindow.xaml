@@ -150,10 +150,10 @@
                            IsExpanded="False"
                            HorizontalAlignment="Stretch">
                 <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox Content="Use regular expressions"/>
-                    <CheckBox Content="Case sensitive"/>
-                    <CheckBox Content="Item name only"/>
-                    <CheckBox Content="Item extension only" Margin="0,0,0,12"/>
+                    <CheckBox x:Name="chckBox_regex" Content="Use regular expressions"/>
+                    <CheckBox x:Name="chckBox_case" Content="Case sensitive"/>
+                    <CheckBox x:Name="chckBox_nameOnly" Content="Item name only"/>
+                    <CheckBox x:Name="chckBox_extOnly" Content="Item extension only" Margin="0,0,0,12"/>
                 </StackPanel>
             </controls:Expander>
 
@@ -162,10 +162,10 @@
                            IsExpanded="False"
                            HorizontalAlignment="Stretch">
                 <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox Content="Match all occurences"/>
-                    <CheckBox Content="Exclude files"/>
-                    <CheckBox Content="Exclude folders"/>
-                    <CheckBox Content="Exclude subfolder items" Margin="0,0,0,12"/>
+                    <CheckBox x:Name="chckBox_matchAll" Content="Match all occurences"/>
+                    <CheckBox x:Name="chckBox_excludeFiles" Content="Exclude files"/>
+                    <CheckBox x:Name="chckBox_excludeFolders" Content="Exclude folders"/>
+                    <CheckBox x:Name="chckBox_excludeSubfolders" Content="Exclude subfolder items" Margin="0,0,0,12"/>
                 </StackPanel>
             </controls:Expander>
             <controls:Expander Background="Transparent"
@@ -173,7 +173,7 @@
                            IsExpanded="False"
                            HorizontalAlignment="Stretch">
                 <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox Content="Enumerate items"/>
+                    <CheckBox x:Name="chckBox_enumItems" Content="Enumerate items"/>
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Spacing="8">
                         <TextBlock Text="Filename casing" Margin="0,4,12,0"/>
                         <ToggleButton x:Name="UppercaseBtn" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="TT" Width="36" ToolTipService.ToolTip="Make uppercase"/>

@@ -400,7 +400,7 @@ HRESULT CPowerRenameUI::_EnumerateItems(_In_ IUnknown* pdtobj)
         if (SUCCEEDED(hr))
         {
             m_prpui.Start();
-            hr = m_sppre->Start();
+            hr = m_sppre->Start(NULL);
             m_prpui.Stop();
         }
 

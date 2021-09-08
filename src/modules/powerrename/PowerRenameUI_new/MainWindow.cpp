@@ -58,6 +58,51 @@ namespace winrt::PowerRenameUI_new::implementation
         return m_fileRegExShortcuts;
     }
 
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxRegex()
+    {
+        return chckBox_regex();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxCaseSensitive()
+    {
+        return chckBox_case();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxNameOnly()
+    {
+        return chckBox_nameOnly();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExtensionOnly()
+    {
+        return chckBox_extOnly();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxMatchAll()
+    {
+        return chckBox_matchAll();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeFiles()
+    {
+        return chckBox_excludeFiles();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeFolders()
+    {
+        return chckBox_excludeFolders();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeSubfolders()
+    {
+        return chckBox_excludeSubfolders();
+    }
+
+    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxEnumerateItems()
+    {
+        return chckBox_enumItems();
+    }
+
     void MainWindow::AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId)
     {
         auto newItem = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(id, original, type);

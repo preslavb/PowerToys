@@ -19,6 +19,16 @@ namespace winrt::PowerRenameUI_new::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> SearchRegExShortcuts();
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> FileRegExShortcuts();
 
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxRegex();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxCaseSensitive();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxNameOnly();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxExtensionOnly();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxMatchAll();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeFiles();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeFolders();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeSubfolders();
+        Windows::UI::Xaml::Controls::CheckBox ChckBoxEnumerateItems();
+
         void AddExplorerItem(int32_t id, hstring const& original,int32_t type, int32_t parentId);
 
     private:

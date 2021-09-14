@@ -8,6 +8,7 @@
 
 #include <common/utils/resources.h>
 #include <common/utils/process_path.h>
+#include <common/utils/HDropIterator.h>
 
 extern HINSTANCE g_hInst;
 
@@ -114,6 +115,11 @@ HRESULT CPowerRenameMenu::QueryContextMenu(HMENU hMenu, UINT index, UINT uIDFirs
 
 HRESULT CPowerRenameMenu::InvokeCommand(_In_ LPCMINVOKECOMMANDINFO pici)
 {
+    return RunPowerRename(pici, nullptr);
+}
+
+HRESULT CPowerRenameMenu::RunPowerRename(CMINVOKECOMMANDINFO* pici, IShellItemArray* psiItemArray)
+{
     HRESULT hr = E_FAIL;
 
     if (CSettingsInstance().GetEnabled() &&
@@ -121,102 +127,115 @@ HRESULT CPowerRenameMenu::InvokeCommand(_In_ LPCMINVOKECOMMANDINFO pici)
         (LOWORD(pici->lpVerb) == 0))
     {
         Trace::Invoked();
-        InvokeStruct* pInvokeData = new (std::nothrow) InvokeStruct;
-        hr = E_OUTOFMEMORY;
-        if (pInvokeData)
+        // Set the application path based on the location of the dll
+        std::wstring path = get_module_folderpath(g_hInst);
+        path = path + L"\\PowerRenameUIHost.exe";
+        LPTSTR lpApplicationName = (LPTSTR)path.c_str();
+        // Create an anonymous pipe to stream filenames
+        SECURITY_ATTRIBUTES sa;
+        HANDLE hReadPipe;
+        HANDLE hWritePipe;
+        sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+        sa.lpSecurityDescriptor = NULL;
+        sa.bInheritHandle = TRUE;
+        if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0))
         {
-            pInvokeData->hwndParent = pici->hwnd;
-            hr = CoMarshalInterThreadInterfaceInStream(__uuidof(m_spdo), m_spdo, &(pInvokeData->pstrm));
-            if (SUCCEEDED(hr))
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            return hr;
+        }
+        if (!SetHandleInformation(hWritePipe, HANDLE_FLAG_INHERIT, 0))
+        {
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            return hr;
+        }
+        CAtlFile writePipe(hWritePipe);
+
+        CString commandLine;
+        commandLine.Format(_T("\"%s\""), lpApplicationName);
+
+        int nSize = commandLine.GetLength() + 1;
+        LPTSTR lpszCommandLine = new TCHAR[nSize];
+        _tcscpy_s(lpszCommandLine, nSize, commandLine);
+
+        STARTUPINFO startupInfo;
+        ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
+        startupInfo.cb = sizeof(STARTUPINFO);
+        startupInfo.hStdInput = hReadPipe;
+        startupInfo.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+        if (pici)
+        {
+            startupInfo.wShowWindow = pici->nShow;
+        }
+        else
+        {
+            startupInfo.wShowWindow = SW_SHOWNORMAL;
+        }
+
+        PROCESS_INFORMATION processInformation;
+
+        // Start the resizer
+        CreateProcess(
+            NULL,
+            lpszCommandLine,
+            NULL,
+            NULL,
+            TRUE,
+            0,
+            NULL,
+            NULL,
+            &startupInfo,
+            &processInformation);
+        delete[] lpszCommandLine;
+        if (!CloseHandle(processInformation.hProcess))
+        {
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            return hr;
+        }
+        if (!CloseHandle(processInformation.hThread))
+        {
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            return hr;
+        }
+
+        // psiItemArray is NULL if called from InvokeCommand. This part is used for the MSI installer. It is not NULL if it is called from Invoke (MSIX).
+        if (!psiItemArray)
+        {
+            // Stream the input files
+            HDropIterator i(m_spdo);
+            for (i.First(); !i.IsDone(); i.Next())
             {
-                // Set the application path based on the location of the dll
-                std::wstring path = get_module_folderpath(g_hInst);
-                path = path + L"\\PowerRenameUIHost.exe";
-                LPTSTR lpApplicationName = (LPTSTR)path.c_str();
-                // Create an anonymous pipe to stream filenames
-                //SECURITY_ATTRIBUTES sa;
-                //HANDLE hReadPipe;
-                //HANDLE hWritePipe;
-                //sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-                //sa.lpSecurityDescriptor = NULL;
-                //sa.bInheritHandle = TRUE;
-                //HRESULT hr = E_FAIL;
-                //if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0))
-                //{
-                //    hr = HRESULT_FROM_WIN32(GetLastError());
-                //    return hr;
-                //}
-                //if (!SetHandleInformation(hWritePipe, HANDLE_FLAG_INHERIT, 0))
-                //{
-                //    hr = HRESULT_FROM_WIN32(GetLastError());
-                //    return hr;
-                //}
-                //CAtlFile writePipe(hWritePipe);
+                CString fileName(i.CurrentItem());
+                // File name can't contain '?'
+                fileName.Append(_T("?"));
 
-                CString commandLine;
-                commandLine.Format(_T("\"%s\""), lpApplicationName);
-
-                //// Set the output directory
-                //if (m_pidlFolder)
-                //{
-                //    TCHAR szFolder[MAX_PATH];
-                //    SHGetPathFromIDList(m_pidlFolder, szFolder);
-
-                //    commandLine.AppendFormat(_T(" /d \"%s\""), szFolder);
-                //}
-
-                int nSize = commandLine.GetLength() + 1;
-                LPTSTR lpszCommandLine = new TCHAR[nSize];
-                _tcscpy_s(lpszCommandLine, nSize, commandLine);
-
-                STARTUPINFO startupInfo;
-                ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
-                startupInfo.cb = sizeof(STARTUPINFO);
-                //startupInfo.hStdInput = hReadPipe;
-                startupInfo.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
-                if (pici)
-                {
-                    startupInfo.wShowWindow = pici->nShow;
-                }
-                else
-                {
-                    startupInfo.wShowWindow = SW_SHOWNORMAL;
-                }
-
-                PROCESS_INFORMATION processInformation;
-
-                // Start the resizer
-                CreateProcess(
-                    NULL,
-                    lpszCommandLine,
-                    NULL,
-                    NULL,
-                    TRUE,
-                    0,
-                    NULL,
-                    NULL,
-                    &startupInfo,
-                    &processInformation);
-                delete[] lpszCommandLine;
-                if (!CloseHandle(processInformation.hProcess))
-                {
-                    hr = HRESULT_FROM_WIN32(GetLastError());
-                    return hr;
-                }
-                if (!CloseHandle(processInformation.hThread))
-                {
-                    hr = HRESULT_FROM_WIN32(GetLastError());
-                    return hr;
-                }
-            }
-
-            if (FAILED(hr))
-            {
-                delete pInvokeData;
+                writePipe.Write(fileName, fileName.GetLength() * sizeof(TCHAR));
             }
         }
-        Trace::InvokedRet(hr);
+        else
+        {
+            //m_pdtobj will be NULL when invoked from the MSIX build as Initialize is never called (IShellExtInit functions aren't called in case of MSIX).
+            DWORD fileCount = 0;
+            // Gets the list of files currently selected using the IShellItemArray
+            psiItemArray->GetCount(&fileCount);
+            // Iterate over the list of files
+            for (DWORD i = 0; i < fileCount; i++)
+            {
+                IShellItem* shellItem;
+                psiItemArray->GetItemAt(i, &shellItem);
+                LPWSTR itemName;
+                // Retrieves the entire file system path of the file from its shell item
+                shellItem->GetDisplayName(SIGDN_FILESYSPATH, &itemName);
+                CString fileName(itemName);
+                // File name can't contain '?'
+                fileName.Append(_T("?"));
+                // Write the file path into the input stream for image resizer
+                writePipe.Write(fileName, fileName.GetLength() * sizeof(TCHAR));
+            }
+        }
+
+        writePipe.Close();
     }
+    Trace::InvokedRet(hr);
 
     return hr;
 }
@@ -280,7 +299,7 @@ HRESULT __stdcall CPowerRenameMenu::Invoke(IShellItemArray* psiItemArray, IBindC
         }
         // Prevent Shutting down before PowerRenameUI is created
         ModuleAddRef();
-        //hr = SHCreateThread(s_PowerRenameUIThreadProc, pInvokeData, CTF_COINIT | CTF_PROCESS_REF, nullptr) ? S_OK : E_FAIL;
+        hr = RunPowerRename(nullptr, psiItemArray);
     }
     Trace::InvokedRet(hr);
     return S_OK;

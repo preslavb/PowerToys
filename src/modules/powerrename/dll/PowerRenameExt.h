@@ -49,6 +49,8 @@ public:
         return E_NOTIMPL;
     }
 
+    HRESULT RunPowerRename(CMINVOKECOMMANDINFO* pici, IShellItemArray* psiItemArray);
+
     // Inherited via IExplorerCommand
     virtual HRESULT __stdcall GetTitle(IShellItemArray* psiItemArray, LPWSTR* ppszName) override;
     virtual HRESULT __stdcall GetIcon(IShellItemArray* psiItemArray, LPWSTR* ppszIcon) override;

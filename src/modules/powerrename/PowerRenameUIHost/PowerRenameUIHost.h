@@ -85,7 +85,7 @@ public:
         AppWindow* m_app;
     };
 
-    static int Show(HINSTANCE hInstance);
+    static int Show(HINSTANCE hInstance, std::vector<std::wstring> files);
     LRESULT MessageHandler(UINT message, WPARAM wParam, LPARAM lParam) noexcept;
 
 private:
@@ -95,13 +95,13 @@ private:
         Reset
     };
 
-    AppWindow(HINSTANCE hInstance) noexcept;
+    AppWindow(HINSTANCE hInstance, std::vector<std::wstring> files) noexcept;
     void CreateAndShowWindow();
     bool OnCreate(HWND, LPCREATESTRUCT) noexcept;
     void OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify) noexcept;
     void OnDestroy(HWND hwnd) noexcept;
     void OnResize(HWND, UINT state, int cx, int cy) noexcept;
-    HRESULT CreateShellItemArrayFromPaths(UINT ct, LPCWSTR rgt[], IShellItemArray** ppsia);
+    HRESULT CreateShellItemArrayFromPaths(std::vector<std::wstring> files, IShellItemArray** ppsia);
 
     void PopulateExplorerItems();
     HRESULT EnumerateShellItems(_In_ IEnumShellItems* enumShellItems);
@@ -126,7 +126,7 @@ private:
     wil::unique_haccel m_accelerators;
     const HINSTANCE m_instance;
     HWND m_xamlIsland{};
-    HWND m_window;
+    HWND m_window{};
     winrt::PowerRenameUI_new::MainWindow m_mainUserControl{ nullptr };
 
     bool m_disableCountUpdate = false;

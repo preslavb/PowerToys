@@ -5,15 +5,18 @@
 #include "PowerRenameUIHost.h"
 #include <settings.h>
 #include <trace.h>
+#include <string>
+#include <sstream>
+#include <vector>
 
 #define MAX_LOADSTRING 100
 
 const wchar_t c_WindowClass[] = L"PowerRename";
 HINSTANCE g_hostHInst;
 
-int AppWindow::Show(HINSTANCE hInstance)
+int AppWindow::Show(HINSTANCE hInstance, std::vector<std::wstring> files)
 {
-    auto window = AppWindow(hInstance);
+    auto window = AppWindow(hInstance, files);
     window.CreateAndShowWindow();
     return window.MessageLoop(window.m_accelerators.get());
 }
@@ -33,7 +36,7 @@ LRESULT AppWindow::MessageHandler(UINT message, WPARAM wParam, LPARAM lParam) no
     return base_type::MessageHandler(message, wParam, lParam);
 }
 
-AppWindow::AppWindow(HINSTANCE hInstance) noexcept :
+AppWindow::AppWindow(HINSTANCE hInstance, std::vector<std::wstring> files) noexcept :
     m_instance{ hInstance }, m_mngrEvents{ this }
 {
     HRESULT hr = CPowerRenameManager::s_CreateInstance(&m_prManager);
@@ -46,13 +49,8 @@ AppWindow::AppWindow(HINSTANCE hInstance) noexcept :
     if (SUCCEEDED(hr))
     {
         CComPtr<IShellItemArray> shellItemArray;
-        LPCWSTR input[] = {
-            L"C:\\Users\\stefa\\Projects\\test_dir\\asd",
-            L"C:\\Users\\stefa\\Projects\\test_dir\\1.SSS",
-            L"C:\\Users\\stefa\\Projects\\test_dir\\2.SSS"
-        };
 
-        CreateShellItemArrayFromPaths(3, input, &shellItemArray);
+        CreateShellItemArrayFromPaths(files, &shellItemArray);
         CComPtr<IEnumShellItems> enumShellItems;
         hr = shellItemArray->EnumItems(&enumShellItems);
         if (SUCCEEDED(hr))
@@ -146,17 +144,16 @@ void AppWindow::OnResize(HWND, UINT state, int cx, int cy) noexcept
 }
 
 HRESULT AppWindow::CreateShellItemArrayFromPaths(
-    UINT ct,
-    LPCWSTR rgt[],
+    std::vector<std::wstring> files,
     IShellItemArray** ppsia)
 {
     *ppsia = nullptr;
-    PIDLIST_ABSOLUTE* rgpidl = new (std::nothrow) PIDLIST_ABSOLUTE[ct];
+    PIDLIST_ABSOLUTE* rgpidl = new (std::nothrow) PIDLIST_ABSOLUTE[files.size()];
     HRESULT hr = rgpidl ? S_OK : E_OUTOFMEMORY;
     UINT cpidl;
-    for (cpidl = 0; SUCCEEDED(hr) && cpidl < ct; cpidl++)
+    for (cpidl = 0; SUCCEEDED(hr) && cpidl < files.size(); cpidl++)
     {
-        hr = SHParseDisplayName(rgt[cpidl], nullptr, &rgpidl[cpidl], 0, nullptr);
+        hr = SHParseDisplayName(files[cpidl].c_str(), nullptr, &rgpidl[cpidl], 0, nullptr);
     }
     if (SUCCEEDED(hr))
     {
@@ -601,10 +598,41 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+#define BUFSIZE 4096*4 
+
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    if (hStdin == INVALID_HANDLE_VALUE)
+        ExitProcess(1);
+    BOOL bSuccess;
+    WCHAR chBuf[BUFSIZE];
+    DWORD dwRead; 
+    std::vector<std::wstring> files;
+    for (;;)
+    {
+        // Read from standard input and stop on error or no data.
+        bSuccess = ReadFile(hStdin, chBuf, BUFSIZE * sizeof(wchar_t), &dwRead, NULL);
+
+        if (!bSuccess || dwRead == 0)
+            break;
+
+        std::wstring asd{ chBuf, dwRead / sizeof(wchar_t) };
+
+        std::wstringstream ss(asd);
+        std::wstring item;
+        wchar_t delimiter = '?';
+        while (std::getline(ss, item, delimiter))
+        {
+            files.push_back(item);
+        }
+
+        if (!bSuccess)
+            break;
+    } 
+
     g_hostHInst = hInstance;
     winrt::init_apartment(winrt::apartment_type::single_threaded);
 
     winrt::PowerRenameUI_new::App app;
-    const auto result = AppWindow::Show(hInstance);
+    const auto result = AppWindow::Show(hInstance, files);
     app.Close();
 }

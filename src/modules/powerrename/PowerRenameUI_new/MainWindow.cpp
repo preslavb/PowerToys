@@ -15,15 +15,15 @@ namespace winrt::PowerRenameUI_new::implementation
         m_searchRegExShortcuts = winrt::single_threaded_observable_vector<PowerRenameUI_new::RegExShortcut>();
         m_fileRegExShortcuts = winrt::single_threaded_observable_vector<PowerRenameUI_new::RegExShortcut>();
 
-        auto folder = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(0, L"New Folder", 0);
-        folder.Children();
-        folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(1, L"a.txt", 1));
-        folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(2, L"b.txt", 1));
-        folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(3, L"c.txt", 1));
-        m_explorerItems.Append(folder);
-        m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(4, L"1.txt", 1));
-        m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(5, L"2.txt", 1));
-        m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(6, L"3.txt", 1));
+        //auto folder = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(0, L"New Folder", 0);
+        //folder.Children();
+        //folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(1, L"a.txt", 1));
+        //folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(2, L"b.txt", 1));
+        //folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(3, L"c.txt", 1));
+        //m_explorerItems.Append(folder);
+        //m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(4, L"1.txt", 1));
+        //m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(5, L"2.txt", 1));
+        //m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(6, L"3.txt", 1));
 
         m_searchRegExShortcuts.Append(winrt::make<PowerRenameUI_new::implementation::RegExShortcut>(L"\\.", L"Matches any character"));
         m_searchRegExShortcuts.Append(winrt::make<PowerRenameUI_new::implementation::RegExShortcut>(L"\\d", L"Any digit, short for [0-9]"));
@@ -56,6 +56,16 @@ namespace winrt::PowerRenameUI_new::implementation
     winrt::Windows::Foundation::Collections::IObservableVector<winrt::PowerRenameUI_new::RegExShortcut> MainWindow::FileRegExShortcuts()
     {
         return m_fileRegExShortcuts;
+    }
+
+    Windows::UI::Xaml::Controls::TextBox MainWindow::TextBoxSearch()
+    {
+        return textBox_search();
+    }
+
+        Windows::UI::Xaml::Controls::TextBox MainWindow::TextBoxReplace()
+    {
+        return textBox_replace();
     }
 
     Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxRegex()
@@ -103,6 +113,26 @@ namespace winrt::PowerRenameUI_new::implementation
         return chckBox_enumItems();
     }
 
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnUpperCase()
+    {
+        return tglBtn_upperCase();
+    }
+    
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnLowerCase()
+    {
+        return tglBtn_lowerCase();
+    }
+    
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnTitleCase()
+    {
+        return tglBtn_titleCase();
+    }
+
+    Windows::UI::Xaml::Controls::Button MainWindow::BtnRename()
+    {
+        return btn_rename();
+    }
+
     void MainWindow::AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId)
     {
         auto newItem = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(id, original, type);
@@ -112,11 +142,42 @@ namespace winrt::PowerRenameUI_new::implementation
         }
         else
         {
+            auto parent = FindById(parentId);
+            parent.Children().Append(newItem);
         }
     }
-}
 
-void winrt::PowerRenameUI_new::implementation::MainWindow::Click_rename(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
-{
-    m_explorerItems.Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(4, L"1212121.txt", 0));
+    void MainWindow::UpdateExplorerItem(int32_t id, hstring const& newName)
+    {        
+        auto itemToUpdate = FindById(id);
+        if (itemToUpdate != NULL)
+        {
+            itemToUpdate.Renamed(newName);
+        }
+    }
+
+    PowerRenameUI_new::ExplorerItem MainWindow::FindById(int32_t id)
+    {
+        auto fakeRoot = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(0, L"Fake", 0);
+        fakeRoot.Children(m_explorerItems);
+        return FindById(fakeRoot, id);
+    }
+
+    PowerRenameUI_new::ExplorerItem MainWindow::FindById(PowerRenameUI_new::ExplorerItem& root, int32_t id)
+    {
+        if (root.Id() == id)
+            return root;
+
+        if (root.Type() == static_cast<UINT>(ExplorerItem::ExplorerItemType::Folder))
+        {
+            for (auto c : root.Children())
+            {
+                auto result = FindById(c, id);
+                if (result != NULL)
+                    return result;
+            }
+        }
+
+        return NULL;
+    }
 }

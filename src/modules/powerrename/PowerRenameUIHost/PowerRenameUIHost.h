@@ -7,6 +7,7 @@
 #include <PowerRenameEnum.h>
 #include <PowerRenameItem.h>
 #include <PowerRenameManager.h>
+#include <PowerRenameInterfaces.h>
 
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.system.h>
@@ -33,10 +34,67 @@ using namespace Windows::UI::Xaml::Controls;
 class AppWindow : public DesktopWindowT<AppWindow>
 {
 public:
+    // Proxy class to Advise() PRManager, as AppWindow can't implement IPowerRenameManagerEvents
+    class UIHostPowerRenameManagerEvents : public IPowerRenameManagerEvents
+    {
+    public:
+        UIHostPowerRenameManagerEvents(AppWindow* app) :
+            m_refCount{ 1 }, m_app{ app }
+        {
+        }
+
+        IFACEMETHODIMP_(ULONG)
+        AddRef()
+        {
+            return InterlockedIncrement(&m_refCount);
+        }
+
+        IFACEMETHODIMP_(ULONG)
+        Release()
+        {
+            long refCount = InterlockedDecrement(&m_refCount);
+
+            if (refCount == 0)
+            {
+                delete this;
+            }
+            return refCount;
+        }
+
+        IFACEMETHODIMP QueryInterface(_In_ REFIID riid, _Outptr_ void** ppv)
+        {
+            static const QITAB qit[] = {
+                QITABENT(UIHostPowerRenameManagerEvents, IPowerRenameManagerEvents),
+                { 0 }
+            };
+            return QISearch(this, qit, riid, ppv);
+        }
+
+        HRESULT OnItemAdded(_In_ IPowerRenameItem* renameItem) override { return m_app->OnItemAdded(renameItem); }
+        HRESULT OnUpdate(_In_ IPowerRenameItem* renameItem) override { return m_app->OnUpdate(renameItem); }
+        HRESULT OnError(_In_ IPowerRenameItem* renameItem) override { return m_app->OnError(renameItem); }
+        HRESULT OnRegExStarted(_In_ DWORD threadId) override { return m_app->OnRegExStarted(threadId); }
+        HRESULT OnRegExCanceled(_In_ DWORD threadId) override { return m_app->OnRegExCanceled(threadId); }
+        HRESULT OnRegExCompleted(_In_ DWORD threadId) override { return m_app->OnRegExCompleted(threadId); }
+        HRESULT OnRenameStarted() override { return m_app->OnRenameStarted(); }
+        HRESULT OnRenameCompleted() override { return m_app->OnRenameCompleted(); }
+
+    private:
+        long m_refCount;
+
+        AppWindow* m_app;
+    };
+
     static int Show(HINSTANCE hInstance);
     LRESULT MessageHandler(UINT message, WPARAM wParam, LPARAM lParam) noexcept;
 
 private:
+    enum class UpdateFlagCommand
+    {
+        Set = 0,
+        Reset
+    };
+
     AppWindow(HINSTANCE hInstance) noexcept;
     void CreateAndShowWindow();
     bool OnCreate(HWND, LPCREATESTRUCT) noexcept;
@@ -44,18 +102,43 @@ private:
     void OnDestroy(HWND hwnd) noexcept;
     void OnResize(HWND, UINT state, int cx, int cy) noexcept;
     HRESULT CreateShellItemArrayFromPaths(UINT ct, LPCWSTR rgt[], IShellItemArray** ppsia);
+
     void PopulateExplorerItems();
-    HRESULT EnumerateItems(_In_ IEnumShellItems* enumShellItems);
-    void ValidateFlags();
-    void UpdateFlags();
+    HRESULT EnumerateShellItems(_In_ IEnumShellItems* enumShellItems);
+    void SearchReplaceChanged();
+    void ValidateFlags(PowerRenameFlags flag);
+    void UpdateFlag(PowerRenameFlags flag, UpdateFlagCommand command);
+    void SetHandlers();
+    void Rename();
+    HRESULT WriteSettings();
+    void UpdateCounts();
+
+    HRESULT OnItemAdded(_In_ IPowerRenameItem* renameItem);
+    HRESULT OnUpdate(_In_ IPowerRenameItem* renameItem);
+    HRESULT OnError(_In_ IPowerRenameItem* renameItem);
+    HRESULT OnRegExStarted(_In_ DWORD threadId);
+    HRESULT OnRegExCanceled(_In_ DWORD threadId);
+    HRESULT OnRegExCompleted(_In_ DWORD threadId);
+    HRESULT OnRenameStarted();
+    HRESULT OnRenameCompleted();
+
 
     wil::unique_haccel m_accelerators;
     const HINSTANCE m_instance;
     HWND m_xamlIsland{};
+    HWND m_window;
     winrt::PowerRenameUI_new::MainWindow m_mainUserControl{ nullptr };
 
     bool m_disableCountUpdate = false;
     CComPtr<IPowerRenameManager> m_prManager;
     CComPtr<IUnknown> m_dataSource;
     CComPtr<IPowerRenameEnum> m_prEnum;
+    UIHostPowerRenameManagerEvents m_mngrEvents;
+    DWORD m_cookie = 0;
+    CComPtr<IAutoComplete2> m_spSearchAC;
+    CComPtr<IUnknown> m_spSearchACL;
+    CComPtr<IAutoComplete2> m_spReplaceAC;
+    CComPtr<IUnknown> m_spReplaceACL;
+    UINT m_selectedCount = 0;
+    UINT m_renamingCount = 0;
 };

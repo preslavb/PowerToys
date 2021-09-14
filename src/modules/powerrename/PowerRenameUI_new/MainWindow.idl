@@ -11,6 +11,9 @@ namespace PowerRenameUI_new
         Windows.Foundation.Collections.IObservableVector<RegExShortcut> SearchRegExShortcuts { get; };
         Windows.Foundation.Collections.IObservableVector<RegExShortcut> FileRegExShortcuts { get; };
 
+        Windows.UI.Xaml.Controls.TextBox TextBoxSearch();
+        Windows.UI.Xaml.Controls.TextBox TextBoxReplace();
+        
         Windows.UI.Xaml.Controls.CheckBox ChckBoxRegex();
         Windows.UI.Xaml.Controls.CheckBox ChckBoxCaseSensitive();
         Windows.UI.Xaml.Controls.CheckBox ChckBoxNameOnly();
@@ -21,6 +24,13 @@ namespace PowerRenameUI_new
         Windows.UI.Xaml.Controls.CheckBox ChckBoxExcludeSubfolders();
         Windows.UI.Xaml.Controls.CheckBox ChckBoxEnumerateItems();
 
+        Windows.UI.Xaml.Controls.Button BtnRename();
+        
+        Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnUpperCase();
+        Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnLowerCase();
+        Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnTitleCase();
+
         void AddExplorerItem(Int32 id, String original, Int32 type, Int32 parentId);
+        void UpdateExplorerItem(Int32 id, String newName);
     }
 }

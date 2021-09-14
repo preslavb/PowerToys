@@ -5,7 +5,7 @@
 namespace winrt::PowerRenameUI_new::implementation
 {
     ExplorerItem::ExplorerItem(int32_t id, hstring const& original, int32_t type) :
-        m_id{ id }, m_original{ original }, m_renamed{ L"renamed_" + original }, m_type{ type }
+        m_id{ id }, m_original{ original }, m_type{ type }
     {
         if (m_type == static_cast<UINT>(ExplorerItemType::Folder))
         {

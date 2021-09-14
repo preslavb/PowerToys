@@ -19,6 +19,9 @@ namespace winrt::PowerRenameUI_new::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> SearchRegExShortcuts();
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> FileRegExShortcuts();
 
+        Windows::UI::Xaml::Controls::TextBox TextBoxSearch();
+        Windows::UI::Xaml::Controls::TextBox TextBoxReplace();
+
         Windows::UI::Xaml::Controls::CheckBox ChckBoxRegex();
         Windows::UI::Xaml::Controls::CheckBox ChckBoxCaseSensitive();
         Windows::UI::Xaml::Controls::CheckBox ChckBoxNameOnly();
@@ -29,15 +32,21 @@ namespace winrt::PowerRenameUI_new::implementation
         Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeSubfolders();
         Windows::UI::Xaml::Controls::CheckBox ChckBoxEnumerateItems();
 
-        void AddExplorerItem(int32_t id, hstring const& original,int32_t type, int32_t parentId);
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnUpperCase();
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnLowerCase();
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnTitleCase();
 
+        Windows::UI::Xaml::Controls::Button BtnRename();
+
+        void AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId);
+        void UpdateExplorerItem(int32_t id, hstring const& newName);
     private:
+        PowerRenameUI_new::ExplorerItem FindById(int32_t id);
+        PowerRenameUI_new::ExplorerItem FindById(PowerRenameUI_new::ExplorerItem& root, int32_t id);
+
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::ExplorerItem> m_explorerItems;
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> m_searchRegExShortcuts;
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> m_fileRegExShortcuts;
-
-    public:
-        void Click_rename(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

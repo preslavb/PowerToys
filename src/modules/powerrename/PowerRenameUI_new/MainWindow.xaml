@@ -83,7 +83,7 @@
               Grid.RowSpan="3"/>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="0" Margin="0,12,0,12">
-            <TextBox Header="Search for" Margin="12,0,12,0">
+            <TextBox x:Name="textBox_search" Header="Search for" Margin="12,0,12,0">
                 <ToolTipService.ToolTip>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -113,7 +113,7 @@
             </TextBox>
             <Grid Margin="12,12,12,0">
 
-                <TextBox x:Name="ReplaceWidthTextBox" Header="Replace with">
+                <TextBox x:Name="textBox_replace" Header="Replace with">
                     <ToolTipService.ToolTip>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -176,9 +176,9 @@
                     <CheckBox x:Name="chckBox_enumItems" Content="Enumerate items"/>
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Spacing="8">
                         <TextBlock Text="Filename casing" Margin="0,4,12,0"/>
-                        <ToggleButton x:Name="UppercaseBtn" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="TT" Width="36" ToolTipService.ToolTip="Make uppercase"/>
-                        <ToggleButton x:Name="LowercaseBtn" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="tt" Width="36" ToolTipService.ToolTip="Make lowercase"/>
-                        <ToggleButton x:Name="TitlecaseBtn" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="Tt" Width="36" ToolTipService.ToolTip="Make titlecase"/>
+                        <ToggleButton x:Name="tglBtn_upperCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="TT" Width="36" ToolTipService.ToolTip="Make uppercase"/>
+                        <ToggleButton x:Name="tglBtn_lowerCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="tt" Width="36" ToolTipService.ToolTip="Make lowercase"/>
+                        <ToggleButton x:Name="tglBtn_titleCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="Tt" Width="36" ToolTipService.ToolTip="Make titlecase"/>
                     </StackPanel>
 
                 </StackPanel>
@@ -202,7 +202,7 @@
                     <FontIcon Glyph="&#xE713;" />
                 </Button.Content>
             </Button>
-            <Button Style="{StaticResource AccentButtonStyle}" Click="Click_rename">
+            <Button x:Name="btn_rename" Style="{StaticResource AccentButtonStyle}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE8AC;" FontSize="14" FontFamily="Segoe MDL2 Assets" />

@@ -5,6 +5,8 @@
 
 #include <PowerRenameInterfaces.h>
 
+class AppWindow;
+
 class CPowerRenameManager :
     public IPowerRenameManager,
     public IPowerRenameRegExEvents
@@ -130,4 +132,6 @@ protected:
     CRITICAL_SECTION m_critsecReentrancy;
 
     long m_refCount;
+
+    AppWindow* hostUIApp;
 };

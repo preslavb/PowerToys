@@ -5,13 +5,13 @@
 #include "PowerRenameTest.h"
 #include <PowerRenameInterfaces.h>
 #include <PowerRenameItem.h>
-#include <PowerRenameUI.h>
+//#include <PowerRenameUI.h>
 #include <PowerRenameManager.h>
 #include <Shobjidl.h>
 
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-HINSTANCE g_hInst;
+HINSTANCE g_hostHInst;
 void ModuleAddRef() {}
 void ModuleRelease() {}
 
@@ -29,7 +29,7 @@ int APIENTRY wWinMain(
     _In_ PWSTR lpCmdLine,
     _In_ int nCmdShow)
 {
-    g_hInst = hInstance;
+    g_hostHInst = hInstance;
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (SUCCEEDED(hr))
     {
@@ -45,16 +45,16 @@ int APIENTRY wWinMain(
                 if (SUCCEEDED(spsrm->PutRenameItemFactory(spsrif)))
                 {
                     // Create the rename UI instance and pass the manager
-                    CComPtr<IPowerRenameUI> spsrui;
-                    if (SUCCEEDED(CPowerRenameUI::s_CreateInstance(spsrm, nullptr, true, &spsrui)))
-                    {
-                        // Call blocks until we are done
-                        spsrui->Show(NULL);
-                        spsrui->Close();
+                    //CComPtr<IPowerRenameUI> spsrui;
+                    //if (SUCCEEDED(CPowerRenameUI::s_CreateInstance(spsrm, nullptr, true, &spsrui)))
+                    //{
+                    //    // Call blocks until we are done
+                    //    spsrui->Show(NULL);
+                    //    spsrui->Close();
 
-                        // Need to call shutdown to break circular dependencies
-                        spsrm->Shutdown();
-                    }
+                    //    // Need to call shutdown to break circular dependencies
+                    //    spsrm->Shutdown();
+                    //}
                 }
             }
         }

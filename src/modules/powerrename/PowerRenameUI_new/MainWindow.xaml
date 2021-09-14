@@ -47,174 +47,230 @@
         FileTemplate="{StaticResource FileTemplate}" />
     </UserControl.Resources>
 
+    <Grid Background="Transparent">
 
-    <Grid Background="{StaticResource BackgroundAcrylicBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="86"/>
+            <RowDefinition Height="48"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="64"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" x:Name="PreviewColumn"/>
-            <ColumnDefinition Width="360" />
+            <ColumnDefinition Width="390" x:Name="PreviewColumn"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0"
-              Background="{ThemeResource SolidBackgroundColor}"
-              Grid.RowSpan="3"/>
+        <Grid Grid.Row="1" Grid.Column="1" Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                VerticalAlignment="Stretch" 
+                                HorizontalAlignment="Stretch" 
+                                Margin="0,0,20,20"
+                                CornerRadius="8"
+                                BorderThickness="1"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <TextBlock Text="Preview"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   Grid.Column="0"
-                   Style="{ThemeResource TitleTextBlockStyle}"
-                   VerticalAlignment="Center"
-                   Margin="12,36,0,0"/>
+            <CheckBox Content="" Margin="16,0,0,0" />
+            <TextBlock Text="Original" FontWeight="SemiBold" Margin="104,-2,0,0" VerticalAlignment="Center" />
+            <TextBlock Text="Renamed" FontWeight="SemiBold" Margin="412,-2,0,0" VerticalAlignment="Center"  />
+            <Button Content="&#xE16E;" Background="Transparent" FontFamily="Segoe Fluent Icons" Height="32" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,8,0">
+                <Button.Flyout>
+                    <MenuBarItemFlyout Placement="Bottom">
+                        <controls:RadioMenuFlyoutItem Text="Show all files" IsChecked="True" GroupName="Filter"/>
+                        <controls:RadioMenuFlyoutItem Text="Only show files that will be renamed" GroupName="Filter"/>
+                    </MenuBarItemFlyout>
+                </Button.Flyout>
+            </Button>
 
-        <TextBlock Text="Search criteria"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   Grid.Column="1"
-                   Style="{ThemeResource TitleTextBlockStyle}"
-                   VerticalAlignment="Center"
-                   Margin="12,36,0,0" />
-        <Grid Background="{StaticResource SolidBackgroundColor}"
-              Grid.Row="3"
-              Grid.RowSpan="3"/>
-
-        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="0" Margin="0,12,0,12">
-            <TextBox x:Name="textBox_search" Header="Search for" Margin="12,0,12,0">
-                <ToolTipService.ToolTip>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="28"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="RegEx cheatsheet" FontWeight="SemiBold" />
-                        <ListView ItemsSource="{x:Bind SearchRegExShortcuts}"
-                                          Grid.Row="1"
-                                          IsItemClickEnabled="True"
-                                          Margin="-4,12,0,0">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="local:RegExShortcut">
-                                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="-8,0,0,0">
-                                        <!--<controls:DropShadowPanel ShadowOpacity="0.2" OffsetX="0" OffsetY="1" BlurRadius="2">-->
-                                            <Border CornerRadius="2" Padding="8" Background="{ThemeResource SnippetBackgroundBrush}">
-                                                <TextBlock FontFamily="Consolas" Text="{x:Bind Code}"/>
-                                            </Border>
-                                        <!--</controls:DropShadowPanel>-->
-                                        <TextBlock Text="{x:Bind Description}" FontSize="12" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </ToolTipService.ToolTip>
-            </TextBox>
-            <Grid Margin="12,12,12,0">
-
-                <TextBox x:Name="textBox_replace" Header="Replace with">
-                    <ToolTipService.ToolTip>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="28"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="File creation cheatsheet" FontWeight="SemiBold" />
-                            <ListView ItemsSource="{x:Bind FileRegExShortcuts}"
-                                          Grid.Row="1"
-                                          IsItemClickEnabled="True"
-                                          Margin="-4,12,0,0">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="local:RegExShortcut">
-                                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="-8,0,0,0">
-                                            <!--<ToolkitControls:DropShadowPanel ShadowOpacity="0.2" OffsetX="0" OffsetY="1" BlurRadius="2">-->
-                                            <Border CornerRadius="2" Padding="8" Background="{ThemeResource SnippetBackgroundBrush}">
-                                                <TextBlock FontFamily="Consolas" Text="{x:Bind Code}"/>
-                                            </Border>
-                                            <!--</ToolkitControls:DropShadowPanel>-->
-                                            <TextBlock Text="{x:Bind Description}" FontSize="12" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
-                    </ToolTipService.ToolTip>
-                </TextBox>
-            </Grid>
-            <ScrollViewer>
-
-            </ScrollViewer>
-            <controls:Expander Background="Transparent"
-                           Header="Search options" HorizontalContentAlignment="Stretch"
-                           IsExpanded="False"
-                           HorizontalAlignment="Stretch">
-                <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox x:Name="chckBox_regex" Content="Use regular expressions"/>
-                    <CheckBox x:Name="chckBox_case" Content="Case sensitive"/>
-                    <CheckBox x:Name="chckBox_nameOnly" Content="Item name only"/>
-                    <CheckBox x:Name="chckBox_extOnly" Content="Item extension only" Margin="0,0,0,12"/>
-                </StackPanel>
-            </controls:Expander>
-
-            <controls:Expander Background="Transparent"
-                           Header="File exclusions" HorizontalContentAlignment="Stretch"
-                           IsExpanded="False"
-                           HorizontalAlignment="Stretch">
-                <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox x:Name="chckBox_matchAll" Content="Match all occurences"/>
-                    <CheckBox x:Name="chckBox_excludeFiles" Content="Exclude files"/>
-                    <CheckBox x:Name="chckBox_excludeFolders" Content="Exclude folders"/>
-                    <CheckBox x:Name="chckBox_excludeSubfolders" Content="Exclude subfolder items" Margin="0,0,0,12"/>
-                </StackPanel>
-            </controls:Expander>
-            <controls:Expander Background="Transparent"
-                           Header="Output options" HorizontalContentAlignment="Stretch"
-                           IsExpanded="False"
-                           HorizontalAlignment="Stretch">
-                <StackPanel Margin="12,0,12,0" Orientation="Vertical">
-                    <CheckBox x:Name="chckBox_enumItems" Content="Enumerate items"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Spacing="8">
-                        <TextBlock Text="Filename casing" Margin="0,4,12,0"/>
-                        <ToggleButton x:Name="tglBtn_upperCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="TT" Width="36" ToolTipService.ToolTip="Make uppercase"/>
-                        <ToggleButton x:Name="tglBtn_lowerCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="tt" Width="36" ToolTipService.ToolTip="Make lowercase"/>
-                        <ToggleButton x:Name="tglBtn_titleCase" Background="Transparent" FontWeight="SemiLight" FontFamily="Consolas" Content="Tt" Width="36" ToolTipService.ToolTip="Make titlecase"/>
-                    </StackPanel>
-
-                </StackPanel>
-            </controls:Expander>
-
-        </StackPanel>
-        <Border CornerRadius="2"
-                Margin="12,34,12,12"
-                Grid.Row="1" Grid.RowSpan="2"
-                BorderBrush="{ThemeResource TextControlBorderBrush}"
-                BorderThickness="1">
-            <controls:TreeView x:Name="FileTree" Margin="0,12,0,0"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{x:Bind ExplorerItems}" 
+            <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+            <ScrollViewer Grid.Row="1">
+                <controls:TreeView x:Name="FileTree" Margin="2,12,12,12"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{x:Bind ExplorerItems}"
                             ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" SelectionMode="Multiple"/>
-        </Border>
+            </ScrollViewer>
+
+        </Grid>
+
+        <Grid Grid.Column="0"  Grid.Row="1" 
+                                VerticalAlignment="Stretch" 
+                                HorizontalAlignment="Stretch" 
+                                Margin="20,0,20,20"
+                                                       
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="48" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical" Padding="0,0,0,16">
+
+                <Grid>
 
 
-        <StackPanel Orientation="Horizontal" Grid.Row="5" Spacing="12" Margin="12" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-            <Button x:Name="SettingsBtn" Grid.Row="5" Background="Transparent" Grid.Column="1">
+                    <TextBox x:Name="textBox_search" PlaceholderText="Search for" Height="48" Padding="12,12,0,0" VerticalContentAlignment="Center"  >
+                    </TextBox>
+
+                    <Button FontFamily="Segoe Fluent Icons"
+                          VerticalAlignment="Center"
+                            Visibility="{Binding ElementName=RegExButton, Path=IsChecked}"
+                            Height="32"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Content="&#xE943;"
+                            Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                            HorizontalAlignment="Right">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="28" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="48" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="RegEx cheatsheet"
+                                               FontWeight="SemiBold" />
+                                    <ListView ItemsSource="{x:Bind SearchRegExShortcuts}"
+                                              Grid.Row="1"
+                                              IsItemClickEnabled="True"
+                                              Margin="-4,12,0,0">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="local:RegExShortcut">
+                                                <Grid ColumnSpacing="8"
+                                                      Margin="-10,0,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="48" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border CornerRadius="4"
+                                                            Padding="8"
+                                                            HorizontalAlignment="Left"
+                                                            BorderThickness="1"
+                                                            BorderBrush="{ThemeResource ButtonBorderBrush}"
+                                                            Background="{ThemeResource ButtonBackground}">
+                                                        <TextBlock FontFamily="Consolas"
+                                                                   Foreground="{ThemeResource ButtonForeground}"
+                                                                   Text="{x:Bind Code}" />
+                                                    </Border>
+
+                                                    <TextBlock Text="{x:Bind Description}"
+                                                               FontSize="12"
+                                                               Grid.Column="1"
+                                                               Margin="0,0,0,0"
+                                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                               VerticalAlignment="Center" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                    <HyperlinkButton Grid.Row="2"
+                                                     VerticalAlignment="Bottom">
+                                        <TextBlock Text="Learn more about RegEx" />
+                                    </HyperlinkButton>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+
+
+                <CheckBox x:Name="chckBox_regex" Content="Use RegEx" Margin="2,12,0,0" />
+                <CheckBox x:Name="chckBox_matchAll" Content="Match all occurences" Margin="2,4,0,0" />
+                <CheckBox x:Name="chckBox_case" Content="Case sensitive"  Margin="2,4,0,0" />
+
+                <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" Margin="0,24,0,16" />
+                <TextBox x:Name="textBox_replace" Margin="0,0,0,0" PlaceholderText="Replace with" Height="48" Padding="12,12,0,0" VerticalContentAlignment="Center"  >
+                </TextBox>
+
+                <TextBlock Text="Apply to"
+                           FontSize="12"
+                           Margin="0,16,0,8" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Spacing="4" Grid.Row="1" >
+                    <ComboBox x:Name="comboBox_renameParts"
+                              SelectedIndex="0"
+                              Width="200"
+                              HorizontalAlignment="Stretch"
+                              Grid.Column="0"
+                              Grid.Row="1">
+                        <x:String>Filename + extension</x:String>
+                        <x:String>Filename only</x:String>
+                        <x:String>Extension only</x:String>
+                    </ComboBox>
+                    <AppBarSeparator Margin="5,0,5,0" />
+                    <ToggleButton x:Name="tglBtn_includeFiles" Content="&#xE160;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include files"/>
+                    <ToggleButton x:Name="tglBtn_includeFolders" Content="&#xE8B7;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include folders"/>
+                    <ToggleButton x:Name="tglBtn_includeSubfolders" Content="&#xE12F;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include subfolders"/>
+                </StackPanel>
+
+
+                <TextBlock Text="Text formatting" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,24,0,8"/>
+
+
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <ToggleButton x:Name="tglBtn_lowerCase" Content="aa" FontWeight="Medium" Height="32" ToolTipService.ToolTip="lowercase"/>
+                    <ToggleButton x:Name="tglBtn_upperCase" Content="AA" FontWeight="Medium" Height="32" ToolTipService.ToolTip="UPPERCASE"/>
+                    <ToggleButton x:Name="tglBtn_titleCase" Content="Aa"  FontWeight="Medium" Height="32" ToolTipService.ToolTip="Title case"/>
+                    <ToggleButton x:Name="tglBtn_capitalize" Content="Aa Aa"  FontWeight="Medium" Height="32" ToolTipService.ToolTip="Capitalize Each Word"/>
+                    <AppBarSeparator Margin="5,0,5,0" />
+                    <ToggleButton x:Name="tglBtn_enumItems" Content="&#xEA40;" FontFamily="Segoe Fluent Icons" Height="32" ToolTipService.ToolTip="Enumerate items"/>
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <Rectangle Height="1"
+                       Fill="{ThemeResource CardStrokeColorDefaultBrush}"
+                       HorizontalAlignment="Stretch"
+                       Margin="0,0,0,0"
+                       VerticalAlignment="Top"
+                       Grid.Row="1" />
+
+
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Spacing="8" Margin="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                <Button x:Name="SettingsBtn"
+                        Height="32"
+                        Content="&#xE713;"
+                        ToolTipService.ToolTip="Settings"
+                        FontFamily="Segoe Fluent Icons"
+                        Grid.Row="5"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Grid.Column="1" />
+
+                <Button Content="&#xE728;"
+                        FontFamily="Segoe Fluent Icons"
+                        ToolTipService.ToolTip="Presets"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Grid.Row="1"
+                        Height="32"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Left">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Photo rule 1" />
+                            <MenuFlyoutItem Text="Date time rule" />
+                            <MenuFlyoutItem Text="And another rule" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+
+            </StackPanel>
+            <Button x:Name="btn_rename" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource AccentButtonStyle}">
                 <Button.Content>
-                    <FontIcon Glyph="&#xE713;" />
-                </Button.Content>
-            </Button>
-            <Button x:Name="btn_rename" Style="{StaticResource AccentButtonStyle}">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xE8AC;" FontSize="14" FontFamily="Segoe MDL2 Assets" />
-                        <TextBlock Text="Rename"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE13E;"
+                                   VerticalAlignment="Center"
+                                   Margin="0,2,8,0"
+                                   FontFamily="Segoe Fluent Icons" />
+                        <TextBlock Text="Apply" />
                     </StackPanel>
                 </Button.Content>
             </Button>
-        </StackPanel>
+        </Grid>
 
         <StackPanel x:Name="TitleBar" Orientation="Horizontal">
-            <Image Source="Assets/PowerRename.png" Width="16" Height="16" VerticalAlignment="Top" Margin="11,9,0,0"/>
-            <TextBlock Text="PowerRename for Windows" FontSize="12" Margin="8,8,0,0" VerticalAlignment="Top" />
+            <Image Source="Assets/PowerRename.png" Width="16" Height="16" VerticalAlignment="Top" Margin="20,9,0,0"/>
+            <TextBlock Text="PowerRename" Style="{StaticResource CaptionTextBlockStyle}" Margin="18,8,8,0" VerticalAlignment="Top" />
         </StackPanel>
     </Grid>
 </UserControl>

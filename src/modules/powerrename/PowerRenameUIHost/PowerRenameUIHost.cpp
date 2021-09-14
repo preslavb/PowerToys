@@ -266,8 +266,7 @@ void AppWindow::ValidateFlags(PowerRenameFlags flag)
         {
             m_mainUserControl.TglBtnLowerCase().IsChecked(false);
             m_mainUserControl.TglBtnTitleCase().IsChecked(false);
-            //TODO(stefan): Add Capitalized checkbox
-            //Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_CAPITALIZED), FALSE);
+            m_mainUserControl.TglBtnCapitalize().IsChecked(false);
         }
     }
     else if (flag == Lowercase)
@@ -276,7 +275,7 @@ void AppWindow::ValidateFlags(PowerRenameFlags flag)
         {
             m_mainUserControl.TglBtnUpperCase().IsChecked(false);
             m_mainUserControl.TglBtnTitleCase().IsChecked(false);
-            //Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_CAPITALIZED), FALSE);
+            m_mainUserControl.TglBtnCapitalize().IsChecked(false);
         }
     }
     else if (flag == Titlecase)
@@ -285,31 +284,17 @@ void AppWindow::ValidateFlags(PowerRenameFlags flag)
         {
             m_mainUserControl.TglBtnUpperCase().IsChecked(false);
             m_mainUserControl.TglBtnLowerCase().IsChecked(false);
-            //Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_CAPITALIZED), FALSE);
+            m_mainUserControl.TglBtnCapitalize().IsChecked(false);
         }
     }
-    //else if (checkBoxId == IDC_TRANSFORM_CAPITALIZED)
-    //{
-    //    if (Button_GetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_CAPITALIZED)) == BST_CHECKED)
-    //    {
-    //        Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_UPPERCASE), FALSE);
-    //        Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_LOWERCASE), FALSE);
-    //        Button_SetCheck(GetDlgItem(m_hwnd, IDC_TRANSFORM_TITLECASE), FALSE);
-    //    }
-    //}
-    else if (flag == NameOnly)
+    else if (flag == Capitalized)
     {
-        if (m_mainUserControl.ChckBoxNameOnly().IsChecked())
+        if (m_mainUserControl.TglBtnCapitalize().IsChecked())
         {
-            m_mainUserControl.ChckBoxExtensionOnly().IsChecked(false);
-        }
-    }
-    else if (flag == ExtensionOnly)
-    {
-        if (m_mainUserControl.ChckBoxExtensionOnly().IsChecked())
-        {
-            m_mainUserControl.ChckBoxNameOnly().IsChecked(false);
-        }
+            m_mainUserControl.TglBtnUpperCase().IsChecked(false);
+            m_mainUserControl.TglBtnLowerCase().IsChecked(false);
+            m_mainUserControl.TglBtnTitleCase().IsChecked(false);
+        }    
     }
 }
 
@@ -373,6 +358,15 @@ void AppWindow::SetHandlers()
         UpdateFlag(Titlecase, UpdateFlagCommand::Reset);
     });
 
+    // ToggleButton Capitalize
+    m_mainUserControl.TglBtnCapitalize().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        ValidateFlags(Capitalized);
+        UpdateFlag(Capitalized, UpdateFlagCommand::Set);
+    });
+    m_mainUserControl.TglBtnCapitalize().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        UpdateFlag(Capitalized, UpdateFlagCommand::Reset);
+    });
+
     // CheckBox Regex
     m_mainUserControl.ChckBoxRegex().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         ValidateFlags(UseRegularExpressions);
@@ -385,28 +379,30 @@ void AppWindow::SetHandlers()
     // CheckBox CaseSensitive
     m_mainUserControl.ChckBoxCaseSensitive().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         ValidateFlags(CaseSensitive);
-        UpdateFlag(UseRegularExpressions, UpdateFlagCommand::Set);
+        UpdateFlag(CaseSensitive, UpdateFlagCommand::Set);
     });
     m_mainUserControl.ChckBoxCaseSensitive().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         UpdateFlag(CaseSensitive, UpdateFlagCommand::Reset);
     });
 
-    // CheckBox NameOnly
-    m_mainUserControl.ChckBoxNameOnly().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        ValidateFlags(NameOnly);
-        UpdateFlag(NameOnly, UpdateFlagCommand::Set);
-    });
-    m_mainUserControl.ChckBoxNameOnly().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        UpdateFlag(NameOnly, UpdateFlagCommand::Reset);
-    });
-
-    // CheckBox ExtensionOnly
-    m_mainUserControl.ChckBoxExtensionOnly().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        ValidateFlags(ExtensionOnly);
-        UpdateFlag(ExtensionOnly, UpdateFlagCommand::Set);
-    });
-    m_mainUserControl.ChckBoxExtensionOnly().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        UpdateFlag(ExtensionOnly, UpdateFlagCommand::Reset);
+    // ComboBox RenameParts
+    m_mainUserControl.ComboBoxRenameParts().SelectionChanged([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        if (m_mainUserControl.ComboBoxRenameParts().SelectedIndex() == 0) { // Filename + extension
+            UpdateFlag(NameOnly, UpdateFlagCommand::Reset);
+            UpdateFlag(ExtensionOnly, UpdateFlagCommand::Reset);
+        }
+        else if (m_mainUserControl.ComboBoxRenameParts().SelectedIndex() == 1) // Filename Only
+        {
+            ValidateFlags(NameOnly);
+            UpdateFlag(ExtensionOnly, UpdateFlagCommand::Reset);
+            UpdateFlag(NameOnly, UpdateFlagCommand::Set);
+        }
+        else if (m_mainUserControl.ComboBoxRenameParts().SelectedIndex() == 2) // Extension Only
+        {
+            ValidateFlags(ExtensionOnly);
+            UpdateFlag(NameOnly, UpdateFlagCommand::Reset);
+            UpdateFlag(ExtensionOnly, UpdateFlagCommand::Set);
+        }
     });
 
     // CheckBox MatchAllOccurences
@@ -418,39 +414,39 @@ void AppWindow::SetHandlers()
         UpdateFlag(MatchAllOccurences, UpdateFlagCommand::Reset);
     });
 
-    // CheckBox ExcludeFiles
-    m_mainUserControl.ChckBoxExcludeFiles().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+    // ToggleButton IncludeFiles
+    m_mainUserControl.TglBtnIncludeFiles().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         ValidateFlags(ExcludeFiles);
-        UpdateFlag(ExcludeFiles, UpdateFlagCommand::Set);
-    });
-    m_mainUserControl.ChckBoxExcludeFiles().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         UpdateFlag(ExcludeFiles, UpdateFlagCommand::Reset);
     });
-
-    // CheckBox ExcludeFolders
-    m_mainUserControl.ChckBoxExcludeFolders().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        ValidateFlags(ExcludeFolders);
-        UpdateFlag(ExcludeFolders, UpdateFlagCommand::Set);
+    m_mainUserControl.TglBtnIncludeFiles().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        UpdateFlag(ExcludeFiles, UpdateFlagCommand::Set);
     });
-    m_mainUserControl.ChckBoxExcludeFolders().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+
+    // ToggleButton IncludeFolders
+    m_mainUserControl.TglBtnIncludeFolders().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        ValidateFlags(ExcludeFolders);
         UpdateFlag(ExcludeFolders, UpdateFlagCommand::Reset);
     });
-
-    // CheckBox ExcludeSubfolders
-    m_mainUserControl.ChckBoxExcludeSubfolders().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
-        ValidateFlags(ExcludeSubfolders);
-        UpdateFlag(ExcludeSubfolders, UpdateFlagCommand::Set);
+    m_mainUserControl.TglBtnIncludeFolders().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        UpdateFlag(ExcludeFolders, UpdateFlagCommand::Set);
     });
-    m_mainUserControl.ChckBoxExcludeSubfolders().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+
+    // ToggleButton IncludeSubfolders
+    m_mainUserControl.TglBtnIncludeSubfolders().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        ValidateFlags(ExcludeSubfolders);
         UpdateFlag(ExcludeSubfolders, UpdateFlagCommand::Reset);
+    });
+    m_mainUserControl.TglBtnIncludeSubfolders().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+        UpdateFlag(ExcludeSubfolders, UpdateFlagCommand::Set);
     });
 
     // CheckBox EnumerateItems
-    m_mainUserControl.ChckBoxEnumerateItems().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+    m_mainUserControl.TglBtnEnumerateItems().Checked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         ValidateFlags(EnumerateItems);
         UpdateFlag(EnumerateItems, UpdateFlagCommand::Set);
     });
-    m_mainUserControl.ChckBoxEnumerateItems().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
+    m_mainUserControl.TglBtnEnumerateItems().Unchecked([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         UpdateFlag(EnumerateItems, UpdateFlagCommand::Reset);
     });
 

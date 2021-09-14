@@ -78,39 +78,34 @@ namespace winrt::PowerRenameUI_new::implementation
         return chckBox_case();
     }
 
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxNameOnly()
-    {
-        return chckBox_nameOnly();
-    }
-
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExtensionOnly()
-    {
-        return chckBox_extOnly();
-    }
-
     Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxMatchAll()
     {
         return chckBox_matchAll();
     }
 
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeFiles()
+    Windows::UI::Xaml::Controls::ComboBox MainWindow::ComboBoxRenameParts()
     {
-        return chckBox_excludeFiles();
+        return comboBox_renameParts();
     }
 
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeFolders()
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnIncludeFiles()
     {
-        return chckBox_excludeFolders();
+        return tglBtn_includeFiles();
     }
 
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxExcludeSubfolders()
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnIncludeFolders()
     {
-        return chckBox_excludeSubfolders();
+        return tglBtn_includeFolders();
     }
 
-    Windows::UI::Xaml::Controls::CheckBox MainWindow::ChckBoxEnumerateItems()
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnIncludeSubfolders()
     {
-        return chckBox_enumItems();
+        return tglBtn_includeSubfolders();
+    }
+
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnEnumerateItems()
+    {
+        return tglBtn_enumItems();
     }
 
     Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnUpperCase()
@@ -126,6 +121,11 @@ namespace winrt::PowerRenameUI_new::implementation
     Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnTitleCase()
     {
         return tglBtn_titleCase();
+    }
+
+    Windows::UI::Xaml::Controls::Primitives::ToggleButton MainWindow::TglBtnCapitalize()
+    {
+        return tglBtn_capitalize();
     }
 
     Windows::UI::Xaml::Controls::Button MainWindow::BtnRename()

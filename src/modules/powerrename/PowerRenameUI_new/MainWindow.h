@@ -24,17 +24,20 @@ namespace winrt::PowerRenameUI_new::implementation
 
         Windows::UI::Xaml::Controls::CheckBox ChckBoxRegex();
         Windows::UI::Xaml::Controls::CheckBox ChckBoxCaseSensitive();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxNameOnly();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxExtensionOnly();
         Windows::UI::Xaml::Controls::CheckBox ChckBoxMatchAll();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeFiles();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeFolders();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxExcludeSubfolders();
-        Windows::UI::Xaml::Controls::CheckBox ChckBoxEnumerateItems();
+
+        Windows::UI::Xaml::Controls::ComboBox ComboBoxRenameParts();
+
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnIncludeFiles();
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnIncludeFolders();
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnIncludeSubfolders();
 
         Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnUpperCase();
         Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnLowerCase();
         Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnTitleCase();
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnCapitalize();
+
+        Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnEnumerateItems();
 
         Windows::UI::Xaml::Controls::Button BtnRename();
 

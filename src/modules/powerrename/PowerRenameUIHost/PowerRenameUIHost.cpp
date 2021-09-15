@@ -94,6 +94,7 @@ bool AppWindow::OnCreate(HWND, LPCREATESTRUCT) noexcept
 
     PopulateExplorerItems();
     SetHandlers();
+    ReadSettings();
 
     m_mainUserControl.BtnRename().IsEnabled(false);
 
@@ -466,6 +467,29 @@ void AppWindow::Rename()
     WriteSettings();
 }
 
+HRESULT AppWindow::ReadSettings()
+{
+    // Check if we should read flags from settings
+    // or the defaults from the manager.
+    DWORD flags = 0;
+    if (CSettingsInstance().GetPersistState())
+    {
+        flags = CSettingsInstance().GetFlags();
+        m_prManager->PutFlags(flags);
+
+        m_mainUserControl.TextBoxSearch().Text(CSettingsInstance().GetSearchText().c_str());
+        m_mainUserControl.TextBoxReplace().Text(CSettingsInstance().GetReplaceText().c_str());
+    }
+    else
+    {
+        m_prManager->GetFlags(&flags);
+    }
+
+    SetCheckboxesFromFlags(flags);
+
+    return S_OK;
+}
+
 HRESULT AppWindow::WriteSettings()
 {
     // Check if we should store our settings
@@ -503,6 +527,62 @@ HRESULT AppWindow::WriteSettings()
     }
 
     return S_OK;
+}
+
+void AppWindow::SetCheckboxesFromFlags(DWORD flags)
+{
+    if (flags & CaseSensitive)
+    {
+        m_mainUserControl.ChckBoxCaseSensitive().IsChecked(true);
+    }
+    if (flags & MatchAllOccurences)
+    {
+        m_mainUserControl.ChckBoxMatchAll().IsChecked(true);
+    }
+    if (flags & UseRegularExpressions)
+    {
+        m_mainUserControl.ChckBoxRegex().IsChecked(true);
+    }
+    if (flags & EnumerateItems)
+    {
+        m_mainUserControl.TglBtnEnumerateItems().IsChecked(true);
+    }
+    if (flags & ExcludeFiles)
+    {
+        m_mainUserControl.TglBtnIncludeFiles().IsChecked(false);
+    }
+    if (flags & ExcludeFolders)
+    {
+        m_mainUserControl.TglBtnIncludeFolders().IsChecked(false);
+    }
+    if (flags & ExcludeSubfolders)
+    {
+        m_mainUserControl.TglBtnIncludeSubfolders().IsChecked(false);
+    }
+    if (flags & NameOnly)
+    {
+        m_mainUserControl.ComboBoxRenameParts().SelectedIndex(1);
+    }
+    else if (flags & ExtensionOnly)
+    {
+        m_mainUserControl.ComboBoxRenameParts().SelectedIndex(2);
+    }
+    if (flags & Uppercase)
+    {
+        m_mainUserControl.TglBtnUpperCase().IsChecked(true);
+    }
+    else if (flags & Lowercase)
+    {
+        m_mainUserControl.TglBtnLowerCase().IsChecked(true);
+    }
+    else if (flags & Titlecase)
+    {
+        m_mainUserControl.TglBtnTitleCase().IsChecked(true);
+    }
+    else if (flags & Capitalized)
+    {
+        m_mainUserControl.TglBtnCapitalize().IsChecked(true);
+    }
 }
 
 void AppWindow::UpdateCounts()

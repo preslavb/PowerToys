@@ -110,7 +110,9 @@ private:
     void UpdateFlag(PowerRenameFlags flag, UpdateFlagCommand command);
     void SetHandlers();
     void Rename();
+    HRESULT ReadSettings();
     HRESULT WriteSettings();
+    void SetCheckboxesFromFlags(DWORD flags);
     void UpdateCounts();
 
     HRESULT OnItemAdded(_In_ IPowerRenameItem* renameItem);

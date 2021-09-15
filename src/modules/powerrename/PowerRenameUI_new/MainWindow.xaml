@@ -6,12 +6,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    controls:BackdropMaterial.ApplyToRootOrPageBackground="True"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="FolderTemplate" x:DataType="local:ExplorerItem">
-            <controls:TreeViewItem
-            ItemsSource="{x:Bind Children}" IsExpanded="True">
+        <DataTemplate x:Key="FolderTemplate"
+                      x:DataType="local:ExplorerItem">
+            <controls:TreeViewItem ItemsSource="{x:Bind Children}"
+                                   IsExpanded="True">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
@@ -19,14 +21,21 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Image Width="20" Source="../Assets/folder.png" Grid.Column="0"/>
-                    <TextBlock Text="{x:Bind Original}" Grid.Column="1"/>
-                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" Grid.Column="2"/>
+                    <Image Width="16"
+                           Source="../Assets/folder.png"
+                           Grid.Column="0"/>
+                    <TextBlock Text="{x:Bind Original}"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Grid.Column="1"/>
+                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}"
+                               Grid.Column="2"/>
                 </Grid>
             </controls:TreeViewItem>
         </DataTemplate>
 
-        <DataTemplate x:Key="FileTemplate" x:DataType="local:ExplorerItem">
+        <DataTemplate x:Key="FileTemplate"
+                      x:DataType="local:ExplorerItem">
             <controls:TreeViewItem>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -35,22 +44,28 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Image Width="20" Source="../Assets/file.png" Grid.Column="0"/>
-                    <TextBlock Text="{x:Bind Original}" Grid.Column="1"/>
-                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" Grid.Column="2"/>
+                    <Image Width="16"
+                           Source="../Assets/file.png"
+                           Grid.Column="0"/>
+                    <TextBlock Text="{x:Bind Original}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               FontSize="12"
+                               Grid.Column="1"/>
+                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}"
+                               FontSize="12"
+                               Grid.Column="2"/>
                 </Grid>
             </controls:TreeViewItem>
         </DataTemplate>
 
         <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
-        FolderTemplate="{StaticResource FolderTemplate}"
-        FileTemplate="{StaticResource FileTemplate}" />
+                                            FolderTemplate="{StaticResource FolderTemplate}"
+                                            FileTemplate="{StaticResource FileTemplate}" />
     </UserControl.Resources>
 
-    <Grid Background="Transparent">
-
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="0"/> <!-- 48 if we need to draw the titlebar outself -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -58,59 +73,80 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="1" Background="{ThemeResource LayerFillColorDefaultBrush}"
-                                VerticalAlignment="Stretch" 
-                                HorizontalAlignment="Stretch" 
-                                Margin="0,0,20,20"
-                                CornerRadius="8"
-                                BorderThickness="1"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              Background="{ThemeResource LayerFillColorDefaultBrush}"
+              VerticalAlignment="Stretch" 
+              HorizontalAlignment="Stretch"
+              Margin="0,0,20,20"
+              CornerRadius="8"
+              BorderThickness="1"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <CheckBox Content="" Margin="16,0,0,0" />
-            <TextBlock Text="Original" FontWeight="SemiBold" Margin="104,-2,0,0" VerticalAlignment="Center" />
-            <TextBlock Text="Renamed" FontWeight="SemiBold" Margin="412,-2,0,0" VerticalAlignment="Center"  />
-            <Button Content="&#xE16E;" Background="Transparent" FontFamily="Segoe Fluent Icons" Height="32" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,8,0">
+            <CheckBox Content=""
+                      Margin="16,0,0,0" />
+            <TextBlock Text="Original"
+                       FontWeight="SemiBold"
+                       Margin="104,-2,0,0"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Renamed"
+                       FontWeight="SemiBold"
+                       Margin="412,-2,0,0"
+                       VerticalAlignment="Center"  />
+            <Button Content="&#xE16E;"
+                    Background="Transparent"
+                    FontFamily="Segoe Fluent Icons"
+                    Height="32"
+                    BorderThickness="0"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,8,0">
                 <Button.Flyout>
                     <MenuBarItemFlyout Placement="Bottom">
-                        <controls:RadioMenuFlyoutItem Text="Show all files" IsChecked="True" GroupName="Filter"/>
-                        <controls:RadioMenuFlyoutItem Text="Only show files that will be renamed" GroupName="Filter"/>
+                        <controls:RadioMenuFlyoutItem Text="Show all files"
+                                                      IsChecked="True"
+                                                      GroupName="Filter"/>
+                        <controls:RadioMenuFlyoutItem Text="Only show files that will be renamed"
+                                                      GroupName="Filter"/>
                     </MenuBarItemFlyout>
                 </Button.Flyout>
             </Button>
 
-            <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+            <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Bottom" />
             <ScrollViewer Grid.Row="1">
-                <controls:TreeView x:Name="FileTree" Margin="2,12,12,12"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{x:Bind ExplorerItems}"
-                            ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" SelectionMode="Multiple"/>
+                <controls:TreeView x:Name="FileTree"
+                                   Margin="2,12,12,12"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   ItemsSource="{x:Bind ExplorerItems}"
+                                   ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
+                                   SelectionMode="Multiple"/>
             </ScrollViewer>
 
         </Grid>
 
-        <Grid Grid.Column="0"  Grid.Row="1" 
-                                VerticalAlignment="Stretch" 
-                                HorizontalAlignment="Stretch" 
-                                Margin="20,0,20,20"
-                                                       
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+        <Grid Grid.Column="0"
+              Grid.Row="1"
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch"
+              Margin="20,0,20,20"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="48" />
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Vertical" Padding="0,0,0,16">
-
+            <StackPanel Orientation="Vertical"
+                        Padding="0,0,0,16">
                 <Grid>
-
-
-                    <TextBox x:Name="textBox_search" PlaceholderText="Search for" Height="48" Padding="12,12,0,0" VerticalContentAlignment="Center"  >
-                    </TextBox>
+                    <TextBox x:Name="textBox_search" PlaceholderText="Search for" Height="48" Padding="12,12,0,0" VerticalContentAlignment="Center"/>
 
                     <Button FontFamily="Segoe Fluent Icons"
-                          VerticalAlignment="Center"
+                            VerticalAlignment="Center"
                             Visibility="{Binding ElementName=RegExButton, Path=IsChecked}"
                             Height="32"
                             Background="Transparent"
@@ -172,19 +208,36 @@
                 </Grid>
 
 
-                <CheckBox x:Name="chckBox_regex" Content="Use RegEx" Margin="2,12,0,0" />
-                <CheckBox x:Name="chckBox_matchAll" Content="Match all occurences" Margin="2,4,0,0" />
-                <CheckBox x:Name="chckBox_case" Content="Case sensitive"  Margin="2,4,0,0" />
+                <CheckBox x:Name="chckBox_regex"
+                          Content="Use RegEx"
+                          Margin="2,12,0,0" />
+                <CheckBox x:Name="chckBox_matchAll"
+                          Content="Match all occurences"
+                          Margin="2,4,0,0" />
+                <CheckBox x:Name="chckBox_case"
+                          Content="Case sensitive"
+                          Margin="2,4,0,0" />
 
-                <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" Margin="0,24,0,16" />
-                <TextBox x:Name="textBox_replace" Margin="0,0,0,0" PlaceholderText="Replace with" Height="48" Padding="12,12,0,0" VerticalContentAlignment="Center"  >
+                <Rectangle Height="1"
+                           Fill="{ThemeResource CardStrokeColorDefaultBrush}"
+                           HorizontalAlignment="Stretch"
+                           Margin="0,24,0,16" />
+                <TextBox x:Name="textBox_replace"
+                         Margin="0,0,0,0"
+                         PlaceholderText="Replace with"
+                         Height="48"
+                         Padding="12,12,0,0"
+                         VerticalContentAlignment="Center"  >
                 </TextBox>
 
                 <TextBlock Text="Apply to"
                            FontSize="12"
                            Margin="0,16,0,8" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
-                <StackPanel Orientation="Horizontal" Grid.Column="1" Spacing="4" Grid.Row="1" >
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1"
+                            Spacing="4"
+                            Grid.Row="1" >
                     <ComboBox x:Name="comboBox_renameParts"
                               SelectedIndex="0"
                               Width="200"
@@ -196,22 +249,66 @@
                         <x:String>Extension only</x:String>
                     </ComboBox>
                     <AppBarSeparator Margin="5,0,5,0" />
-                    <ToggleButton x:Name="tglBtn_includeFiles" Content="&#xE160;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include files"/>
-                    <ToggleButton x:Name="tglBtn_includeFolders" Content="&#xE8B7;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include folders"/>
-                    <ToggleButton x:Name="tglBtn_includeSubfolders" Content="&#xE12F;" Height="32" IsChecked="True" FontFamily="Segoe Fluent Icons" ToolTipService.ToolTip="Include subfolders"/>
+                    <ToggleButton x:Name="tglBtn_includeFiles"
+                                  Content="&#xE160;"
+                                  Height="32"
+                                  IsChecked="True"
+                                  FontFamily="Segoe Fluent Icons"
+                                  ToolTipService.ToolTip="Include files"/>
+                    <ToggleButton x:Name="tglBtn_includeFolders"
+                                  Content="&#xE8B7;"
+                                  Height="32"
+                                  IsChecked="True"
+                                  FontFamily="Segoe Fluent Icons"
+                                  ToolTipService.ToolTip="Include folders"/>
+                    <ToggleButton x:Name="tglBtn_includeSubfolders"
+                                  Content="&#xE12F;"
+                                  Height="32"
+                                  IsChecked="True"
+                                  FontFamily="Segoe Fluent Icons"
+                                  ToolTipService.ToolTip="Include subfolders"/>
                 </StackPanel>
 
 
-                <TextBlock Text="Text formatting" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,24,0,8"/>
+                <TextBlock Text="Text formatting"
+                           FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Margin="0,24,0,8"/>
 
 
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <ToggleButton x:Name="tglBtn_lowerCase" Content="aa" FontWeight="Medium" Height="32" ToolTipService.ToolTip="lowercase"/>
-                    <ToggleButton x:Name="tglBtn_upperCase" Content="AA" FontWeight="Medium" Height="32" ToolTipService.ToolTip="UPPERCASE"/>
-                    <ToggleButton x:Name="tglBtn_titleCase" Content="Aa"  FontWeight="Medium" Height="32" ToolTipService.ToolTip="Title case"/>
-                    <ToggleButton x:Name="tglBtn_capitalize" Content="Aa Aa"  FontWeight="Medium" Height="32" ToolTipService.ToolTip="Capitalize Each Word"/>
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <ToggleButton x:Name="tglBtn_lowerCase"
+                                  Content="aa"
+                                  FontWeight="Medium"
+                                  Height="32"
+                                  ToolTipService.ToolTip="lowercase"/>
+                    
+                    <ToggleButton x:Name="tglBtn_upperCase"
+                                  Content="AA"
+                                  FontWeight="Medium"
+                                  Height="32"
+                                  ToolTipService.ToolTip="UPPERCASE"/>
+                    
+                    <ToggleButton x:Name="tglBtn_titleCase"
+                                  Content="Aa"
+                                  FontWeight="Medium"
+                                  Height="32"
+                                  ToolTipService.ToolTip="Title case"/>
+                    
+                    <ToggleButton x:Name="tglBtn_capitalize"
+                                  Content="Aa Aa"
+                                  FontWeight="Medium"
+                                  Height="32"
+                                  ToolTipService.ToolTip="Capitalize Each Word"/>
+                    
                     <AppBarSeparator Margin="5,0,5,0" />
-                    <ToggleButton x:Name="tglBtn_enumItems" Content="&#xEA40;" FontFamily="Segoe Fluent Icons" Height="32" ToolTipService.ToolTip="Enumerate items"/>
+                    
+                    <ToggleButton x:Name="tglBtn_enumItems"
+                                  Content="&#xEA40;"
+                                  FontFamily="Segoe Fluent Icons"
+                                  Height="32"
+                                  ToolTipService.ToolTip="Enumerate items"/>
                 </StackPanel>
             </StackPanel>
 
@@ -225,7 +322,14 @@
                        Grid.Row="1" />
 
 
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Spacing="8" Margin="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="1"
+                        Spacing="8"
+                        Margin="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Left">
+                
                 <Button x:Name="SettingsBtn"
                         Height="32"
                         Content="&#xE713;"
@@ -255,7 +359,11 @@
                 </Button>
 
             </StackPanel>
-            <Button x:Name="btn_rename" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource AccentButtonStyle}">
+            <Button x:Name="btn_rename"
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Style="{StaticResource AccentButtonStyle}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE13E;"
@@ -268,9 +376,9 @@
             </Button>
         </Grid>
 
-        <StackPanel x:Name="TitleBar" Orientation="Horizontal">
+        <!--<StackPanel x:Name="TitleBar" Orientation="Horizontal">
             <Image Source="Assets/PowerRename.png" Width="16" Height="16" VerticalAlignment="Top" Margin="20,9,0,0"/>
             <TextBlock Text="PowerRename" Style="{StaticResource CaptionTextBlockStyle}" Margin="18,8,8,0" VerticalAlignment="Top" />
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </UserControl>

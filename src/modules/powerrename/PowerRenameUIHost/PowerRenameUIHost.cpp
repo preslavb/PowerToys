@@ -49,7 +49,12 @@ AppWindow::AppWindow(HINSTANCE hInstance, std::vector<std::wstring> files) noexc
     if (SUCCEEDED(hr))
     {
         CComPtr<IShellItemArray> shellItemArray;
+        // Uncomment this code block and update the path to your local path which you want to see in PowerRename
+        //std::vector<std::wstring> test;
+        //test.push_back(L"C:\\Users\\stefa\\Projects\\test_dir");
+        //CreateShellItemArrayFromPaths(test, &shellItemArray);
 
+        // Comment this line if you uncomment code block above this
         CreateShellItemArrayFromPaths(files, &shellItemArray);
         CComPtr<IEnumShellItems> enumShellItems;
         hr = shellItemArray->EnumItems(&enumShellItems);

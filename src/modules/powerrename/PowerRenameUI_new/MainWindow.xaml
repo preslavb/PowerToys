@@ -63,13 +63,15 @@
                                             FileTemplate="{StaticResource FileTemplate}" />
     </UserControl.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          Padding="20"
+          ColumnSpacing="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/> <!-- 48 if we need to draw the titlebar outself -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="390" x:Name="PreviewColumn"/>
+            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -78,7 +80,6 @@
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               VerticalAlignment="Stretch" 
               HorizontalAlignment="Stretch"
-              Margin="0,0,20,20"
               CornerRadius="8"
               BorderThickness="1"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
@@ -100,7 +101,7 @@
             <Button Content="&#xE16E;"
                     Background="Transparent"
                     FontFamily="Segoe Fluent Icons"
-                    Height="32"
+                    MinHeight="32"
                     BorderThickness="0"
                     HorizontalAlignment="Right"
                     Margin="0,0,8,0">
@@ -134,7 +135,6 @@
               Grid.Row="1"
               VerticalAlignment="Stretch"
               HorizontalAlignment="Stretch"
-              Margin="20,0,20,20"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -148,7 +148,7 @@
                     <Button FontFamily="Segoe Fluent Icons"
                             VerticalAlignment="Center"
                             Visibility="{Binding ElementName=RegExButton, Path=IsChecked}"
-                            Height="32"
+                            MinHeight="32"
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Content="&#xE943;"
@@ -221,7 +221,7 @@
                 <Rectangle Height="1"
                            Fill="{ThemeResource CardStrokeColorDefaultBrush}"
                            HorizontalAlignment="Stretch"
-                           Margin="0,24,0,16" />
+                           Margin="0,16,0,20" />
                 <TextBox x:Name="textBox_replace"
                          Margin="0,0,0,0"
                          PlaceholderText="Replace with"
@@ -232,7 +232,7 @@
 
                 <TextBlock Text="Apply to"
                            FontSize="12"
-                           Margin="0,16,0,8" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                           Margin="2,24,0,8" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
                 <StackPanel Orientation="Horizontal"
                             Grid.Column="1"
@@ -251,19 +251,19 @@
                     <AppBarSeparator Margin="5,0,5,0" />
                     <ToggleButton x:Name="tglBtn_includeFiles"
                                   Content="&#xE160;"
-                                  Height="32"
+                                  MinHeight="32"
                                   IsChecked="True"
                                   FontFamily="Segoe Fluent Icons"
                                   ToolTipService.ToolTip="Include files"/>
                     <ToggleButton x:Name="tglBtn_includeFolders"
                                   Content="&#xE8B7;"
-                                  Height="32"
+                                  MinHeight="32"
                                   IsChecked="True"
                                   FontFamily="Segoe Fluent Icons"
                                   ToolTipService.ToolTip="Include folders"/>
                     <ToggleButton x:Name="tglBtn_includeSubfolders"
                                   Content="&#xE12F;"
-                                  Height="32"
+                                  MinHeight="32"
                                   IsChecked="True"
                                   FontFamily="Segoe Fluent Icons"
                                   ToolTipService.ToolTip="Include subfolders"/>
@@ -273,7 +273,7 @@
                 <TextBlock Text="Text formatting"
                            FontSize="12"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Margin="0,24,0,8"/>
+                           Margin="2,24,0,8"/>
 
 
                 <StackPanel Orientation="Horizontal"
@@ -281,25 +281,25 @@
                     <ToggleButton x:Name="tglBtn_lowerCase"
                                   Content="aa"
                                   FontWeight="Medium"
-                                  Height="32"
+                                  MinHeight="32"
                                   ToolTipService.ToolTip="lowercase"/>
                     
                     <ToggleButton x:Name="tglBtn_upperCase"
                                   Content="AA"
                                   FontWeight="Medium"
-                                  Height="32"
+                                  MinHeight="32"
                                   ToolTipService.ToolTip="UPPERCASE"/>
                     
                     <ToggleButton x:Name="tglBtn_titleCase"
                                   Content="Aa"
                                   FontWeight="Medium"
-                                  Height="32"
+                                  MinHeight="32"
                                   ToolTipService.ToolTip="Title case"/>
                     
                     <ToggleButton x:Name="tglBtn_capitalize"
                                   Content="Aa Aa"
                                   FontWeight="Medium"
-                                  Height="32"
+                                  MinHeight="32"
                                   ToolTipService.ToolTip="Capitalize Each Word"/>
                     
                     <AppBarSeparator Margin="5,0,5,0" />
@@ -307,7 +307,7 @@
                     <ToggleButton x:Name="tglBtn_enumItems"
                                   Content="&#xEA40;"
                                   FontFamily="Segoe Fluent Icons"
-                                  Height="32"
+                                  MinHeight="32"
                                   ToolTipService.ToolTip="Enumerate items"/>
                 </StackPanel>
             </StackPanel>
@@ -331,7 +331,7 @@
                         HorizontalAlignment="Left">
                 
                 <Button x:Name="SettingsBtn"
-                        Height="32"
+                        MinHeight="32"
                         Content="&#xE713;"
                         ToolTipService.ToolTip="Settings"
                         FontFamily="Segoe Fluent Icons"
@@ -346,7 +346,7 @@
                         Background="Transparent"
                         BorderBrush="Transparent"
                         Grid.Row="1"
-                        Height="32"
+                        MinHeight="32"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Left">
                     <Button.Flyout>
@@ -360,7 +360,8 @@
 
             </StackPanel>
             <Button x:Name="btn_rename"
-                    Grid.Row="1"
+                    Grid.Row="2"
+                    MinWidth="96"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Style="{StaticResource AccentButtonStyle}">
@@ -368,7 +369,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE13E;"
                                    VerticalAlignment="Center"
-                                   Margin="0,2,8,0"
+                                   Margin="0,2,16,0"
                                    FontFamily="Segoe Fluent Icons" />
                         <TextBlock Text="Apply" />
                     </StackPanel>

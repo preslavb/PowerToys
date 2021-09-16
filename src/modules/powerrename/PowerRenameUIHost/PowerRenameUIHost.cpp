@@ -76,7 +76,7 @@ void AppWindow::CreateAndShowWindow()
     wcex.hIcon = LoadIconW(m_instance, MAKEINTRESOURCE(IDC_POWERRENAMEUIHOST));
     wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_POWERRENAMEUIHOST);
+    //wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_POWERRENAMEUIHOST);
     wcex.lpszClassName = c_WindowClass;
     wcex.hIconSm = LoadIconW(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
     RegisterClassExW(&wcex); // don't test result, handle error at CreateWindow
@@ -142,11 +142,7 @@ void AppWindow::OnDestroy(HWND hwnd) noexcept
 
 void AppWindow::OnResize(HWND, UINT state, int cx, int cy) noexcept
 {
-    const auto newHeight = cy;
-    const auto newWidth = cx;
-    const auto islandHeight = newHeight - (50 * 2) - 10;
-    const auto islandWidth = newWidth - (10 * 2);
-    SetWindowPos(m_xamlIsland, NULL, 0, 60, islandWidth, islandHeight, SWP_SHOWWINDOW);
+    SetWindowPos(m_xamlIsland, NULL, 0, 0, cx, cy, SWP_SHOWWINDOW);
 }
 
 HRESULT AppWindow::CreateShellItemArrayFromPaths(

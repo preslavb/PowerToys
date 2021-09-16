@@ -335,7 +335,7 @@
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Left">
                 
-                <Button x:Name="SettingsBtn"
+                <Button x:Name="btn_settings"
                         MinHeight="32"
                         Content="&#xE713;"
                         ToolTipService.ToolTip="Settings"
@@ -345,7 +345,7 @@
                         BorderBrush="Transparent"
                         Grid.Column="1" />
 
-                <Button Content="&#xE728;"
+                <!--"<Button Content="&#xE728;"
                         FontFamily="Segoe Fluent Icons"
                         ToolTipService.ToolTip="Presets"
                         Background="Transparent"
@@ -361,7 +361,7 @@
                             <MenuFlyoutItem Text="And another rule" />
                         </MenuFlyout>
                     </Button.Flyout>
-                </Button>
+                </Button>-->
 
             </StackPanel>
             <Button x:Name="btn_rename"

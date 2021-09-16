@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <common/utils/process_path.h>
 
 #define MAX_LOADSTRING 100
 
@@ -453,6 +454,11 @@ void AppWindow::SetHandlers()
     m_mainUserControl.BtnRename().Click([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         Rename();
     });
+
+    m_mainUserControl.BtnSettings().Click([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&)
+    {
+        OpenSettingsApp();
+    });
 }
 
 void AppWindow::Rename()
@@ -527,6 +533,53 @@ HRESULT AppWindow::WriteSettings()
         Trace::SettingsChanged();
     }
 
+    return S_OK;
+}
+
+HRESULT AppWindow::OpenSettingsApp() {
+    std::wstring path = get_module_folderpath(g_hostHInst);
+    path += L"\\..\\..\\PowerToys.exe";
+
+    std::wstring openSettings = L"--open-settings";
+
+    CString commandLine;
+    commandLine.Format(_T("\"%s\""), path.c_str());
+    commandLine.AppendFormat(_T(" %s"), openSettings.c_str());
+
+    int nSize = commandLine.GetLength() + 1;
+    LPTSTR lpszCommandLine = new TCHAR[nSize];
+    _tcscpy_s(lpszCommandLine, nSize, commandLine);
+
+    STARTUPINFO startupInfo;
+    ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
+    startupInfo.cb = sizeof(STARTUPINFO);
+    startupInfo.wShowWindow = SW_SHOWNORMAL;
+
+    PROCESS_INFORMATION processInformation;
+
+    // Start the resizer
+    CreateProcess(
+        NULL,
+        lpszCommandLine,
+        NULL,
+        NULL,
+        TRUE,
+        0,
+        NULL,
+        NULL,
+        &startupInfo,
+        &processInformation);
+
+    delete[] lpszCommandLine;
+
+    if (!CloseHandle(processInformation.hProcess))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+    if (!CloseHandle(processInformation.hThread))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
     return S_OK;
 }
 

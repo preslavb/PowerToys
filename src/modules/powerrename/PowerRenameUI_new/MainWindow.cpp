@@ -133,6 +133,11 @@ namespace winrt::PowerRenameUI_new::implementation
         return btn_rename();
     }
 
+    Windows::UI::Xaml::Controls::Button MainWindow::BtnSettings()
+    {
+        return btn_settings();
+    }
+
     void MainWindow::AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId)
     {
         auto newItem = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(id, original, type);

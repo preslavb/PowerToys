@@ -112,6 +112,7 @@ private:
     void Rename();
     HRESULT ReadSettings();
     HRESULT WriteSettings();
+    HRESULT OpenSettingsApp();
     void SetCheckboxesFromFlags(DWORD flags);
     void UpdateCounts();
 

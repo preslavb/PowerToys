@@ -40,6 +40,7 @@ namespace winrt::PowerRenameUI_new::implementation
         Windows::UI::Xaml::Controls::Primitives::ToggleButton TglBtnEnumerateItems();
 
         Windows::UI::Xaml::Controls::Button BtnRename();
+        Windows::UI::Xaml::Controls::Button BtnSettings();
 
         void AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId);
         void UpdateExplorerItem(int32_t id, hstring const& newName);

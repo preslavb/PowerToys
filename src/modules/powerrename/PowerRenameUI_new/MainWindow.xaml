@@ -428,7 +428,7 @@
                         BorderBrush="Transparent"
                         Grid.Column="1" />
 
-                <Button Content="&#xE728;"
+                <!--<Button Content="&#xE728;"
                         FontFamily="Segoe Fluent Icons"
                         ToolTipService.ToolTip="Presets"
                         Background="Transparent"
@@ -444,7 +444,7 @@
                             <MenuFlyoutItem Text="And another rule" />
                         </MenuFlyout>
                     </Button.Flyout>
-                </Button>
+                </Button>-->
 
             </StackPanel>
             <Button x:Name="btn_rename"

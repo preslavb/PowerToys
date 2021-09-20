@@ -321,6 +321,14 @@ void AppWindow::UpdateFlag(PowerRenameFlags flag, UpdateFlagCommand command)
 
 void AppWindow::SetHandlers()
 {
+    m_mainUserControl.ChangedItem().PropertyChanged([&](winrt::Windows::Foundation::IInspectable const& sender, Data::PropertyChangedEventArgs const&) {
+        int32_t id = std::stoi(std::wstring{ m_mainUserControl.ChangedItem().Original() });
+        bool checked = m_mainUserControl.ChangedItem().Checked();
+        CComPtr<IPowerRenameItem> spItem;
+        m_prManager->GetItemById(id, &spItem);
+        spItem->PutSelected(checked);
+        UpdateCounts();
+    });
     // TextBox Search
     m_mainUserControl.TextBoxSearch().TextChanged([&](winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&) {
         SearchReplaceChanged();

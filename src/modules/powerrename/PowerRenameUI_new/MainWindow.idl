@@ -13,7 +13,7 @@ namespace PowerRenameUI_new
 
         Windows.UI.Xaml.Controls.TextBox TextBoxSearch();
         Windows.UI.Xaml.Controls.TextBox TextBoxReplace();
-        
+
         Windows.UI.Xaml.Controls.CheckBox ChckBoxRegex();
         Windows.UI.Xaml.Controls.CheckBox ChckBoxCaseSensitive();
         Windows.UI.Xaml.Controls.CheckBox ChckBoxMatchAll();
@@ -27,7 +27,7 @@ namespace PowerRenameUI_new
 
         Windows.UI.Xaml.Controls.Button BtnRename();
         Windows.UI.Xaml.Controls.Button BtnSettings();
-        
+
         Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnUpperCase();
         Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnLowerCase();
         Windows.UI.Xaml.Controls.Primitives.ToggleButton TglBtnTitleCase();
@@ -35,5 +35,7 @@ namespace PowerRenameUI_new
 
         void AddExplorerItem(Int32 id, String original, Int32 type, Int32 parentId);
         void UpdateExplorerItem(Int32 id, String newName);
+
+        ExplorerItem ChangedItem();
     }
 }

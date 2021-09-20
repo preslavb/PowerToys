@@ -5,7 +5,7 @@
 namespace winrt::PowerRenameUI_new::implementation
 {
     ExplorerItem::ExplorerItem(int32_t id, hstring const& original, int32_t type) :
-        m_id{ id }, m_original{ original }, m_type{ type }
+        m_id{ id }, m_idStr{ std::to_wstring(id) }, m_original{ original }, m_type{ type }, m_checked{ true }
     {
         if (m_type == static_cast<UINT>(ExplorerItemType::Folder))
         {
@@ -16,6 +16,11 @@ namespace winrt::PowerRenameUI_new::implementation
     int32_t ExplorerItem::Id()
     {
         return m_id;
+    }
+
+    hstring ExplorerItem::IdStr()
+    {
+        return m_idStr;
     }
 
     hstring ExplorerItem::Original()
@@ -55,7 +60,21 @@ namespace winrt::PowerRenameUI_new::implementation
     {
         m_type = value;
     }
-    
+
+    bool ExplorerItem::Checked()
+    {
+        return m_checked;
+    }
+
+    void ExplorerItem::Checked(bool value)
+    {
+        if (m_checked != value)
+        {
+            m_checked = value;
+            m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{ L"Checked" });
+        }
+    }
+
     winrt::Windows::Foundation::Collections::IObservableVector<winrt::PowerRenameUI_new::ExplorerItem> ExplorerItem::Children()
     {
         return m_children;

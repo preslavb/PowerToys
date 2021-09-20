@@ -3,6 +3,7 @@
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
 #endif
+#include <winuser.h>
 
 using namespace winrt;
 using namespace Windows::UI::Xaml;
@@ -14,7 +15,6 @@ namespace winrt::PowerRenameUI_new::implementation
         m_explorerItems = winrt::single_threaded_observable_vector<PowerRenameUI_new::ExplorerItem>();
         m_searchRegExShortcuts = winrt::single_threaded_observable_vector<PowerRenameUI_new::RegExShortcut>();
         m_fileRegExShortcuts = winrt::single_threaded_observable_vector<PowerRenameUI_new::RegExShortcut>();
-
         //auto folder = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(0, L"New Folder", 0);
         //folder.Children();
         //folder.Children().Append(winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(1, L"a.txt", 1));
@@ -138,6 +138,11 @@ namespace winrt::PowerRenameUI_new::implementation
         return btn_settings();
     }
 
+    PowerRenameUI_new::ExplorerItem MainWindow::ChangedItem()
+    {
+        return m_changedItem;
+    }
+
     void MainWindow::AddExplorerItem(int32_t id, hstring const& original, int32_t type, int32_t parentId)
     {
         auto newItem = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(id, original, type);
@@ -185,4 +190,12 @@ namespace winrt::PowerRenameUI_new::implementation
 
         return NULL;
     }
+}
+
+void winrt::PowerRenameUI_new::implementation::MainWindow::Checked_ids(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
+{
+    auto asd = sender.as<Windows::UI::Xaml::Controls::CheckBox>();
+    // TODO(stefan): Ugly, make it nicer!
+    m_changedItem.Original(asd.Name());
+    m_changedItem.Checked(asd.IsChecked().GetBoolean());
 }

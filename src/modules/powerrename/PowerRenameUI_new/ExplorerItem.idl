@@ -4,9 +4,11 @@ namespace PowerRenameUI_new
     {
         ExplorerItem(Int32 id, String original, Int32 type);
         Int32 Id { get; };
+        String IdStr { get; };
         String Original;
         String Renamed;
         Int32 Type;
+        Boolean Checked;
         Windows.Foundation.Collections.IObservableVector<ExplorerItem> Children;
     }
 }

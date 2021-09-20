@@ -19,6 +19,7 @@
 #include <winrt/windows.ui.xaml.controls.h>
 #include <winrt/windows.ui.xaml.controls.primitives.h>
 #include <winrt/Windows.ui.xaml.media.h>
+#include <winrt/Windows.ui.xaml.data.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/PowerRenameUI_new.h>
 

@@ -18,21 +18,15 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Image Width="16"
                            Source="../Assets/folder.png"
                            Grid.Column="0"/>
-                    <TextBlock Text="{x:Bind Original}"
-                               FontSize="12"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Grid.Column="1"/>
-                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}"
-                               Foreground="{ThemeResource SystemColorControlAccentBrush}"
-                                 FontSize="12"
-                                  FontWeight="SemiBold"
-                               Grid.Column="2"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind Original, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Grid.Column="1"/>
+                        <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="12" Grid.Column="2"/>
+                    </StackPanel>
                 </Grid>
             </controls:TreeViewItem>
         </DataTemplate>
@@ -40,25 +34,17 @@
         <DataTemplate x:Key="FileTemplate"
                       x:DataType="local:ExplorerItem">
             <controls:TreeViewItem>
-                <Grid>
+                <Grid Height="42">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="24" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
-                    <Image Width="16"
-                           Source="../Assets/file.png"
-                           Grid.Column="0"/>
-                    <TextBlock Text="{x:Bind Original}"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               FontSize="12"
-                               Grid.Column="1"/>
-                    <TextBlock Text="{x:Bind Renamed, Mode=OneWay}"
-                                 Foreground="{ThemeResource SystemColorControlAccentBrush}"
-                               FontWeight="SemiBold"
-                               FontSize="12"
-                               Grid.Column="2"/>
+                    <Image Width="16" Source="ms-appx:///Assets/file.png" HorizontalAlignment="Left" Grid.Column="0"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind Original, Mode=OneWay}" Opacity="0.6" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Grid.Column="1"/>
+                        <TextBlock Text="{x:Bind Renamed, Mode=OneWay}"  FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="12" Grid.Column="2"/>
+                    </StackPanel>
                 </Grid>
             </controls:TreeViewItem>
         </DataTemplate>
@@ -66,6 +52,64 @@
         <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
                                             FolderTemplate="{StaticResource FolderTemplate}"
                                             FileTemplate="{StaticResource FileTemplate}" />
+        <local:ExplorerItemTemplateSelector x:Key="ListExplorerItemTemplateSelector"
+                                            FolderTemplate="{StaticResource ListFolderTemplate}"
+                                            FileTemplate="{StaticResource ListFileTemplate}" />
+        <local:ExplorerItemTemplateSelector x:Key="RenamedListExplorerItemTemplateSelector"
+                                            FolderTemplate="{StaticResource RenamedFolderTemplate}"
+                                            FileTemplate="{StaticResource RenamedFileTemplate}" />
+
+        <DataTemplate x:Key="ListFolderTemplate" x:DataType="local:ExplorerItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="42"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="320" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Name="{x:Bind IdStr}" Checked="Checked_ids" Unchecked="Checked_ids" IsChecked="{x:Bind Checked, Mode=TwoWay}"/>
+                <Image Width="16" Source="ms-appx:///Assets/folder.png" Grid.Column="1"/>
+                <TextBlock Text="{x:Bind Original, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="12" Grid.Column="2"/>
+                <!--<TextBlock Text="{x:Bind Renamed, Mode=OneWay}" FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}"  VerticalAlignment="Center"  FontSize="12" Grid.Column="2"/>-->
+                <ListView Grid.ColumnSpan="3" ItemsSource="{x:Bind Children}" Grid.Row="1" ItemTemplateSelector="{StaticResource ListExplorerItemTemplateSelector}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ListFileTemplate" x:DataType="local:ExplorerItem">
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="320" />
+                </Grid.ColumnDefinitions>
+
+                <CheckBox Name="{x:Bind IdStr}" Checked="Checked_ids" Unchecked="Checked_ids" IsChecked="{x:Bind Checked, Mode=TwoWay}"/>
+                <Image Width="16" Source="ms-appx:///Assets/file.png" HorizontalAlignment="Left" Grid.Column="1"/>
+                <TextBlock Text="{x:Bind Original, Mode=OneWay}" Opacity="0.6" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Grid.Column="2"/>
+                <!--<TextBlock Text="{x:Bind Renamed, Mode=OneWay}"  FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="12" Grid.Column="2"/>-->
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RenamedFileTemplate" x:DataType="local:ExplorerItem">
+            <Grid>
+                <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}"  VerticalAlignment="Center"  FontSize="12" Grid.Column="2"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RenamedFolderTemplate" x:DataType="local:ExplorerItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="42"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}"  VerticalAlignment="Center"  FontSize="12" Grid.Column="2"/>
+                <ListView  Grid.ColumnSpan="3" ItemsSource="{x:Bind Children}" Margin="-12,0,0,0" Grid.Row="1" ItemTemplateSelector="{StaticResource RenamedListExplorerItemTemplateSelector}"/>
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -125,13 +169,52 @@
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Bottom" />
             <ScrollViewer Grid.Row="1">
-                <controls:TreeView x:Name="FileTree"
-                                   Margin="2,12,12,12"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"
-                                   ItemsSource="{x:Bind ExplorerItems}"
-                                   ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
-                                   SelectionMode="Multiple"/>
+                <Grid Name="MasterGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToggleButton Name="OpenButton" Visibility="Collapsed" IsChecked="True">
+                        <SymbolIcon Symbol="More" />
+                    </ToggleButton>
+                    <TextBlock Text="Nested listviews"  Foreground="Red"/>
+                    <SplitView Name="CoreSplitView"
+
+                        Grid.Row="1"
+                        PaneBackground="Transparent"
+                        DisplayMode="Inline"
+                        IsPaneOpen="{Binding IsChecked,ElementName=OpenButton}"
+                        OpenPaneLength="{Binding Value, ElementName=MasterSlider, Mode=OneWay}" >
+                        <SplitView.Pane>
+                            <Grid Name="PaneGrid" >
+                                <Slider Name="MasterSlider"
+                                    MinWidth="1200"
+                                    VerticalAlignment="Stretch"
+                                   Maximum="1200"
+                                    Minimum="20"
+                                    Opacity="0"
+                                    Value="150" />
+                                <StackPanel Name="PaneStackPanel" 
+                     Margin="0,0,20,0" >
+                                    <ListView x:Name="lstView_"  ItemsSource="{x:Bind ExplorerItems}" ItemTemplateSelector="{StaticResource ListExplorerItemTemplateSelector}"/>
+                                </StackPanel>
+                            </Grid>
+                        </SplitView.Pane>
+                        <Grid Name="ContentGrid" Margin="0,-14,0,0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Other listview with renamed items"  Foreground="Red"/>
+                            <ListView   ItemsSource="{x:Bind ExplorerItems}" Grid.Row="1" ItemTemplateSelector="{StaticResource RenamedListExplorerItemTemplateSelector}" />
+                        </Grid>
+                    </SplitView>
+                </Grid>
+                <!--<muxc:TreeView x:Name="FileTree" Margin="2,12,12,12"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               ItemsSource="{x:Bind ExplorerItems}" 
+                               ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" SelectionMode="Multiple"/>-->
             </ScrollViewer>
 
         </Grid>
@@ -345,7 +428,7 @@
                         BorderBrush="Transparent"
                         Grid.Column="1" />
 
-                <!--"<Button Content="&#xE728;"
+                <Button Content="&#xE728;"
                         FontFamily="Segoe Fluent Icons"
                         ToolTipService.ToolTip="Presets"
                         Background="Transparent"
@@ -361,7 +444,7 @@
                             <MenuFlyoutItem Text="And another rule" />
                         </MenuFlyout>
                     </Button.Flyout>
-                </Button>-->
+                </Button>
 
             </StackPanel>
             <Button x:Name="btn_rename"

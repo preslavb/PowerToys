@@ -190,6 +190,26 @@ namespace winrt::PowerRenameUI_new::implementation
 
         return NULL;
     }
+
+    void MainWindow::ToggleAll(PowerRenameUI_new::ExplorerItem node, bool checked)
+    {
+        if (node == NULL)
+            return;
+
+        node.Checked(checked);
+
+        // Total children count
+        if (node.Type() == static_cast<UINT>(ExplorerItem::ExplorerItemType::Folder))
+        {
+            int total = node.Children().Size();
+
+            // All the children except the last
+            for (auto c : node.Children())
+            {
+                ToggleAll(c, checked);
+            }
+        }
+    }
 }
 
 void winrt::PowerRenameUI_new::implementation::MainWindow::Checked_ids(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
@@ -198,4 +218,11 @@ void winrt::PowerRenameUI_new::implementation::MainWindow::Checked_ids(winrt::Wi
     // TODO(stefan): Ugly, make it nicer!
     m_changedItem.Original(asd.Name());
     m_changedItem.Checked(asd.IsChecked().GetBoolean());
+}
+
+void winrt::PowerRenameUI_new::implementation::MainWindow::SelectAll(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
+{
+    auto fakeRoot = winrt::make<PowerRenameUI_new::implementation::ExplorerItem>(0, L"Fake", 0);
+    fakeRoot.Children(m_explorerItems);
+    ToggleAll(fakeRoot, chckBox_selectAll().IsChecked().GetBoolean());
 }

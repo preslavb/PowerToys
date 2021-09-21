@@ -50,12 +50,14 @@ namespace winrt::PowerRenameUI_new::implementation
         PowerRenameUI_new::ExplorerItem m_changedItem{ -1, L"nvm", 0 };
         PowerRenameUI_new::ExplorerItem FindById(int32_t id);
         PowerRenameUI_new::ExplorerItem FindById(PowerRenameUI_new::ExplorerItem& root, int32_t id);
+        void ToggleAll(PowerRenameUI_new::ExplorerItem node, bool checked);
 
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::ExplorerItem> m_explorerItems;
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> m_searchRegExShortcuts;
         winrt::Windows::Foundation::Collections::IObservableVector<PowerRenameUI_new::RegExShortcut> m_fileRegExShortcuts;
     public:
         void Checked_ids(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
+        void SelectAll(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

@@ -137,8 +137,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <CheckBox Content=""
-                      Margin="16,0,0,0" />
+            <CheckBox x:Name="chckBox_selectAll" IsChecked="True"
+                      Content=""
+                      Margin="16,0,0,0" Checked="SelectAll" Unchecked="SelectAll" />
             <TextBlock Text="Original"
                        FontWeight="SemiBold"
                        Margin="104,-2,0,0"

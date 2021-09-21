@@ -103,7 +103,7 @@ bool AppWindow::OnCreate(HWND, LPCREATESTRUCT) noexcept
     ReadSettings();
 
     m_mainUserControl.BtnRename().IsEnabled(false);
-
+    SearchReplaceChanged();
     return true;
 }
 

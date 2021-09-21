@@ -121,14 +121,6 @@ public:
     IFACEMETHOD(PutRenameItemFactory)(_In_ IPowerRenameItemFactory* pItemFactory) = 0;
 };
 
-interface __declspec(uuid("E6679DEB-460D-42C1-A7A8-E25897061C99")) IPowerRenameUI : public IUnknown
-{
-public:
-    IFACEMETHOD(Show)(_In_opt_ HWND hwndParent) = 0;
-    IFACEMETHOD(Close)() = 0;
-    IFACEMETHOD(Update)() = 0;
-};
-
 interface __declspec(uuid("04AAFABE-B76E-4E13-993A-B5941F52B139")) IPowerRenameMRU : public IUnknown
 {
 public:

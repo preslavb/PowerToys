@@ -76,17 +76,3 @@ IFACEMETHODIMP CMockPowerRenameManagerEvents::OnRenameCompleted()
     m_renameCompleted = true;
     return S_OK;
 }
-
-HRESULT CMockPowerRenameManagerEvents::s_CreateInstance(_In_ IPowerRenameManager* psrm, _Outptr_ IPowerRenameUI** ppsrui)
-{
-    *ppsrui = nullptr;
-    CMockPowerRenameManagerEvents* events = new CMockPowerRenameManagerEvents();
-    HRESULT hr = E_OUTOFMEMORY;
-    if (events != nullptr)
-    {
-        hr = events->QueryInterface(IID_PPV_ARGS(ppsrui));
-        events->Release();
-    }
-
-    return hr;
-}

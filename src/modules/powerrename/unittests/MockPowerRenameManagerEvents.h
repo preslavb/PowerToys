@@ -27,8 +27,6 @@ public:
     IFACEMETHODIMP OnRenameStarted();
     IFACEMETHODIMP OnRenameCompleted();
 
-    static HRESULT s_CreateInstance(_In_ IPowerRenameManager* psrm, _Outptr_ IPowerRenameUI** ppsrui);
-
     ~CMockPowerRenameManagerEvents()
     {
     }

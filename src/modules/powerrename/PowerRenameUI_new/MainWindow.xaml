@@ -51,11 +51,7 @@
 
                 <TextBlock Text="{x:Bind Original, Mode=OneWay}" Width="{Binding ElementName=WidthSlider, Path=Value, Mode=OneWay}" FontFamily="SemiBold" Foreground="Black"  VerticalAlignment="Center"  FontSize="12" Grid.Column="2"/>
 
-                <controls:ItemsRepeater Grid.ColumnSpan="4"
-                                    Grid.Row="1"
-                                    ItemsSource="{x:Bind Children}"
-                                    Margin="12,0,0,0"
-                                    ItemTemplate="{StaticResource ExplorerItemTemplateSelector}"/>
+                <ListView Grid.ColumnSpan="3" ItemsSource="{x:Bind Children}" Grid.Row="1" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
             </Grid>
         </DataTemplate>
 
@@ -73,12 +69,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Text="{x:Bind Renamed, Mode=OneWay}" FontFamily="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}"  VerticalAlignment="Center"  FontSize="12" Grid.Column="2"/>
-                <controls:ItemsRepeater Grid.ColumnSpan="4"
-                                    Grid.Row="1"
-                                    ItemsSource="{x:Bind Children}"
-                                    Margin="0,0,0,0"
-                                    ItemTemplate="{StaticResource RenamedExplorerItemTemplateSelector}"/>
-            </Grid>
+                <ListView Grid.ColumnSpan="3" ItemsSource="{x:Bind Children}" Grid.Row="1" ItemTemplateSelector="{StaticResource RenamedExplorerItemTemplateSelector}"/>
+                </Grid>
         </DataTemplate>
     </UserControl.Resources>
 

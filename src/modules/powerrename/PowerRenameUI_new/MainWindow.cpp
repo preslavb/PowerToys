@@ -198,12 +198,8 @@ namespace winrt::PowerRenameUI_new::implementation
 
         node.Checked(checked);
 
-        // Total children count
         if (node.Type() == static_cast<UINT>(ExplorerItem::ExplorerItemType::Folder))
         {
-            int total = node.Children().Size();
-
-            // All the children except the last
             for (auto c : node.Children())
             {
                 ToggleAll(c, checked);
@@ -214,10 +210,10 @@ namespace winrt::PowerRenameUI_new::implementation
 
 void winrt::PowerRenameUI_new::implementation::MainWindow::Checked_ids(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
 {
-    auto asd = sender.as<Windows::UI::Xaml::Controls::CheckBox>();
+    auto checkbox = sender.as<Windows::UI::Xaml::Controls::CheckBox>();
     // TODO(stefan): Ugly, make it nicer!
-    m_changedItem.Original(asd.Name());
-    m_changedItem.Checked(asd.IsChecked().GetBoolean());
+    m_changedItem.Original(checkbox.Name());
+    m_changedItem.Checked(checkbox.IsChecked().GetBoolean());
 }
 
 void winrt::PowerRenameUI_new::implementation::MainWindow::SelectAll(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
